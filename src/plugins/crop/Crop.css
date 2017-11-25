@@ -1,0 +1,79 @@
+.imager-crop-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1300;
+}
+
+.imager-crop-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.crop-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgb(60, 58, 58);
+    background: rgb(255, 255, 255);
+    cursor: url(assets/cursor-fa-crop-right.cur), crosshair;
+    z-index: 1301;
+}
+
+.crop-top-left {
+    left: 0;
+    top: 0;
+    cursor: nwse-resize;
+}
+
+.crop-top-right {
+    right: 0;
+    top: 0;
+    cursor: nesw-resize;
+}
+
+.crop-bottom-right {
+    right: 0;
+    bottom: 0;
+    cursor: nwse-resize;
+}
+
+.crop-bottom-left {
+    left: 0;
+    bottom: 0;
+    cursor: nesw-resize;
+}
+
+.crop-border {
+    background: url(assets/border.gif);
+    position:absolute;
+}
+
+.crop-border.crop-border-top {
+    width: 100%;
+    height: 1px;
+    top: 4px;
+}
+
+.crop-border.crop-border-right {
+    width: 1px;
+    height: 100%;
+    right: 2px;
+}
+
+.crop-border.crop-border-bottom {
+    width: 100%;
+    height: 1px;
+    bottom: 2px;
+}
+
+.crop-border.crop-border-left {
+    width: 1px;
+    height: 100%;
+    left: 4px;
+}

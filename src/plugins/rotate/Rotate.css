@@ -1,0 +1,82 @@
+.imager-rotate-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1300;
+}
+
+.imager-rotate-canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.rotate-corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 25px;
+    border: 1px solid rgb(60, 58, 58);
+    background: rgb(255, 255, 255);
+    cursor: url(assets/cursor-fa-rotate-right.cur), crosshair;
+    z-index: 1301;
+}
+
+.rotate-top-left {
+    left: 0;
+    top: 0;
+}
+
+.rotate-top-right {
+    right: 0;
+    top: 0;
+}
+
+.rotate-bottom-right {
+    right: 0;
+    bottom: 0;
+}
+
+.rotate-bottom-left {
+    left: 0;
+    bottom: 0;
+}
+
+.rotate-border {
+    background: url(assets/border.gif);
+    position:absolute;
+}
+
+.rotate-border.rotate-border-top {
+    width: 100%;
+    height: 1px;
+    top: 4px;
+}
+
+.rotate-border.rotate-border-right {
+    width: 1px;
+    height: 100%;
+    right: 2px;
+}
+
+.rotate-border.rotate-border-bottom {
+    width: 100%;
+    height: 1px;
+    bottom: 2px;
+}
+
+.rotate-border.rotate-border-left {
+    width: 1px;
+    height: 100%;
+    left: 4px;
+}
+
+.btn-rorate-90 i:after {
+    content: '90';
+    position: absolute;
+    font-size: 14px;
+}

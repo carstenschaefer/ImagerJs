@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>ImagerJs - Redactor with Image Uploading</title>
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="lib/redactor/redactor.css" />
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="lib/redactor/redactor.js"></script>
+
+  <script src="../dist/imagerJs.redactor.js"></script>
+  <link href="../dist/imagerJs.css" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3>ImagerJs - Redactor with Image Uploading</h3></div>
+      <div class="panel-body">
+        <div class="form-group">
+          <textarea class="redactor" cols="30" rows="10">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Quisque luctus diam nunc, mollis suscipit libero porta
+              a. Duis accumsan gravida ex eu bibendum. Vivamus
+              facilisis congue lacus, quis consequat tellus interdum
+              eu. Sed molestie posuere erat, vitae gravida est
+              ultricies tincidunt. Nulla id ornare leo. Nullam
+              malesuada laoreet neque ut tempus. Sed leo velit, cursus
+              sed dolor quis, imperdiet commodo diam. Praesent
+              consequat non metus vitae vestibulum. Vestibulum eu
+              fringilla dui. Donec viverra sem vel dui bibendum
+              pulvinar. In vulputate leo vitae diam gravida, quis
+              egestas turpis gravida. Ut semper lacus turpis, eget
+              ultricies turpis pretium sit amet. Vivamus auctor tellus
+              ac iaculis pellentesque. Aenean bibendum rutrum lectus,
+              quis dictum arcu suscipit et.
+            </p>
+            <p>
+              Phasellus lacinia, mi vitae fermentum euismod, arcu justo fringilla
+              felis, at scelerisque dolor nisi ut ligula. Vivamus interdum metus
+              nisl, ac egestas nisi tincidunt eget. Donec quis tellus consectetur,
+              pretium metus vitae, maximus orci. Phasellus faucibus, nisl a
+              ultrices feugiat, orci dolor varius enim, eget ultrices felis justo
+              ac mauris. Donec rutrum sodales risus quis sodales. Integer
+              porttitor, neque pharetra porta sagittis, nibh est aliquet metus, in
+              pulvinar quam felis a quam. Nunc imperdiet volutpat nulla a ornare.
+              Integer vel ipsum eget nunc sollicitudin placerat. Nam eu auctor
+              nunc. Suspendisse vulputate libero nec vehicula sagittis. Vestibulum
+              imperdiet lorem sed efficitur malesuada. Donec volutpat mauris
+              felis. Vestibulum id diam eu lectus bibendum sagittis nec accumsan
+              felis. Aenean sed ipsum sodales, congue risus at, eleifend urna.
+              Vestibulum sit amet blandit eros.
+            </p>
+            <img src='http://michaelprescott.typepad.com/.a/6a00d83451574c69e201a511c3157d970c-pi' />
+          </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    ImagerJs.translations.set({
+      'Insert': 'Insert'
+    });
+
+    var pluginsConfig = {
+      Save: {
+        upload: true,
+        uploadFunction: function (imageId, imageData, callback) {
+          // Here should be the code to upload image somewhere
+          // to Azure, Amazon S3 or similar. When upload completes we will have
+          // the url of uploaded image. Then call the function callback(image_url)
+          // to notify ImagerJs that image has been uploaded to the server
+          //
+          // Make sure that returned path is on the same domain that imagerJs was loaded from
+          // or contains proper access-control headers.
+      
+		  console.log('uploading ' + imageId);
+		  
+		  var data = imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
+		  var dataJson = '{ "imageId": "' + imageId + '", "imageData" : "' + data + '" }';
+		
+          $.ajax({
+            url: 'https://www.imagerjs.com/api/upload/image',
+			dataType: 'json',
+			data: dataJson,
+            contentType: 'application/json; charset=utf-8',
+            type: 'POST',
+            success: function(imageUrl) {
+              callback(imageUrl); // assuming that server returns an `imageUrl` as a response
+              console.log(imageUrl);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+          });
+        }
+      },
+      Crop: {
+        controlsCss: {
+          width: '15px',
+          height: '15px',
+          background: 'white',
+          border: '1px solid black'
+        },
+        controlsTouchCss: {
+          width: '25px',
+          height: '25px',
+          background: 'white',
+          border: '2px solid black'
+        }
+      },
+      Rotate: {
+        controlsCss: {
+          width: '15px',
+          height: '15px',
+          background: 'white',
+          border: '1px solid black'
+        },
+        controlsTouchCss: {
+          width: '25px',
+          height: '25px',
+          background: 'white',
+          border: '2px solid black'
+        }
+      },
+      Resize: {
+        controlsCss: {
+          width: '15px',
+          height: '15px',
+          background: 'white',
+          border: '1px solid black'
+        },
+        controlsTouchCss: {
+          width: '25px',
+          height: '25px',
+          background: 'white',
+          border: '2px solid black'
+        }
+      }
+    };
+
+    var imagerOptionsForPreview = {
+      plugins: ['Rotate', 'Crop', 'Resize', 'Toolbar', 'Undo'],
+      waitingCursor: 'url(../assets/cursor-fa-rotate-right.cur), wait', // for custom cursors. 
+      editModeCss: {
+      },
+      pluginsConfig: pluginsConfig
+    };
+
+    var imagerOptionsForRedactor = $.extend(true, {}, imagerOptionsForPreview);
+    imagerOptionsForRedactor.plugins = imagerOptionsForRedactor.plugins.concat(['Properties', 'Save', 'Delete']);
+
+    $('.redactor').redactor({
+      plugins: ['ImagerJs'],
+      ImagerJs: {
+        hideFileSelection: true,
+        quality: {
+          defined : [
+            { label: 'Original', scale: 1, quality: 1, percentage: 100 },
+            { label: 'Large', scale: 0.5, quality: 0.5, percentage: 50 },
+            { label: 'Medium', scale: 0.2, quality: 0.2, percentage: 20 },
+            { label: 'Small', scale: 0.05, quality: 0.05, percentage: 5 }
+          ]
+        },
+
+        // here we use the same options config, but it is possible to
+        // use separate configs to achieve different appearance of ImagerJs
+        // when selecting image from file and when inside redactor
+        redactor: imagerOptionsForRedactor,
+        preview: imagerOptionsForPreview
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+.modaljs.canvas-properties {
+    width: 350px;
+}
+
+.canvas-properties .form-inline input,
+.canvas-properties .form-inline select {
+    width: auto;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.canvas-properties .image-size-form label {
+    display: block;
+}
+
+.image-size-form input {
+    width: 120px;
+    display: inline-block;
+}
+
+.image-size-form span {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.image-properties input[type="checkbox"] {
+    margin-right: 8px;
+    position: relative;
+    top: 2px;
+}
