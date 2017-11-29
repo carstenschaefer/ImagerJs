@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: util/FileSelector.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: util/FileSelector.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function ($, namespace, translations) {
+  /**
+   *
+   * @param accept
+   *
+   * @constructor
+   * @memberof ImagerJs.util
+   */
+  var FileSelector = function (accept) {
+    var _this = this;
+
+    _this.acceptTypes = accept;
+
+    _this.$element = $('&lt;div class="file-selector">' +
+    '&lt;input type="file" />' +
+    '&lt;div class="drop-area">' +
+        translations.t('Or drop files here') +
+    '&lt;/div>' +
+    '&lt;div class="error-container bg-danger">&lt;/div>' +
+    '&lt;/div>');
+
+    if (_this.acceptTypes) {
+      _this.$element.find('input').attr('accept', _this.acceptTypes);
+    }
+
+    _this.$element.find('input').on('change', function (e) {
+      if (e.target.files.length &lt; 1) {
+        _this.showError(translations.t('No file selected.'));
+      }
+
+      for (var i = 0; i &lt; e.target.files.length; i++) {
+        if(e.target.files[i].type.indexOf('image') &lt; 0) {
+          _this.showError(translations.t('Incorret file type'));
+          return;
+        }
+      }
+
+      _this.parseFile(e.target.files[0]);
+    });
+
+    var $dropArea = _this.$element.find('.drop-area');
+    $dropArea.on('dragover', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      $dropArea.addClass('hover');
+    });
+    $dropArea.on('dragleave', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      $dropArea.removeClass('hover');
+    });
+    $dropArea.on('drop', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+      $dropArea.removeClass('hover');
+      // fetch FileList object
+      var files = e.originalEvent.dataTransfer.files;
+
+      if (files.length &lt; 1) {
+        _this.showError(translations.t('No file selected.'));
+        return;
+      }
+
+      for (var i = 0; i &lt; files.length; i++) {
+        if(files[i].type.indexOf('image') &lt; 0) {
+          _this.showError(translations.t('Incorret file type.'));
+          return;
+        }
+      }
+
+      _this.parseFile(files[0]);
+    });
+  };
+
+  FileSelector.prototype.parseFile = function (file) {
+    var _this = this;
+
+    var fileReader = new FileReader();
+
+    fileReader.onload = function (onloadEvent) {
+      _this.$element.trigger(
+        'fileSelected.fileSelector', {
+          info: file,
+          data: fileReader.result
+        }
+      );
+    };
+
+    fileReader.readAsDataURL(file);
+  };
+
+  FileSelector.prototype.onFileSelected = function (handler) {
+    var _this = this;
+    _this.$element.on('fileSelected.fileSelector', function (event, file) {
+      handler(file);
+    });
+  };
+
+  FileSelector.prototype.showError = function (error) {
+    var _this = this;
+
+    _this.$element.find('.error-container').html(error);
+    _this.$element.find('.error-container').slideDown(200);
+
+    setTimeout(function () {
+      _this.$element.find('.error-container').slideUp(200);
+    }, 2000);
+  };
+
+  FileSelector.prototype.getElement = function () {
+    return this.$element;
+  };
+
+  FileSelector.prototype.hide = function () {
+    this.$element.hide();
+  };
+
+  FileSelector.prototype.show = function () {
+    this.$element.show();
+  };
+
+  namespace.FileSelector = FileSelector;
+
+})(jQuery, ImagerJs.util, ImagerJs.translations);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ImagerJs.Imager.html">Imager</a></li><li><a href="ImagerJs.plugins.Crop.html">Crop</a></li><li><a href="ImagerJs.plugins.Resize.html">Resize</a></li><li><a href="ImagerJs.plugins.Rotate.html">Rotate</a></li><li><a href="ImagerJs.plugins.Save.html">Save</a></li><li><a href="ImagerJs.plugins.Undo.html">Undo</a></li><li><a href="ImagerJs.progins.Delete.html">Delete</a></li><li><a href="ImagerJs.util.FileSelector.html">FileSelector</a></li><li><a href="RedactorPlugins.ImagerJs.html">ImagerJs</a></li></ul><h3>Namespaces</h3><ul><li><a href="ImagerJs.html">ImagerJs</a></li><li><a href="ImagerJs.plugins.html">plugins</a></li><li><a href="ImagerJs.translations.html">translations</a></li><li><a href="ImagerJs.util.html">util</a></li><li><a href="RedactorPlugins.html">RedactorPlugins</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Aug 30 2016 18:11:43 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
