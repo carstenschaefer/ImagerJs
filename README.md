@@ -13,8 +13,6 @@ Here you will find a detailed documentation about the usage and its configuratio
 
 ## Try Demo
 
-[ImagerJs as a Redactor Plugin](https://carstenschaefer.github.io/ImagerJs/examples/redactor/)
-
 [ImagerJs as a Redactor Plugin with custom load/save functions](https://carstenschaefer.github.io/ImagerJs/examples/remote-upload/)
 
 [ImagerJs Standalone](https://carstenschaefer.github.io/ImagerJs/examples/standalone/)
