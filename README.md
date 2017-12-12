@@ -7,9 +7,11 @@ It is a platform-independent, web-based JavaScript Image Uploader that is very e
 
 ## What is ImagerJs? How can I use it?
 
-Here you will find more informations about features, examples, and you can test it live: [ImagerJs](https://www.imagerjs.com)
+Here you will find more informations about features and a short faq: [ImagerJs](https://www.imagerjs.com)
 
-Here you will find a detailed documentation about the usage and its configuration: [ImagerJs-Docs](https://www.imagerjs.com/documentation)
+And here you'll find some examples and you can test it live: [ImagerJs on GitHub](https://carstenschaefer.github.io/ImagerJs/)
+
+Here you will find a detailed documentation about the usage and its configuration: [ImagerJs-Docs](https://www.imagerjs.com
 
 ## Try Demo
 
