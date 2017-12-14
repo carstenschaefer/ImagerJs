@@ -11,7 +11,7 @@ Here you will find more informations about features and a short faq: [ImagerJs](
 
 And here you'll find some examples and you can test it live: [ImagerJs on GitHub](https://carstenschaefer.github.io/ImagerJs/)
 
-Here you will find a detailed documentation about the usage and its configuration: [ImagerJs-Docs](https://www.imagerjs.com/documentation)
+Here you will find a detailed documentation about the usage and its configuration: [ImagerJs-Docs](https://github.com/carstenschaefer/ImagerJs/wiki)
 
 ## Release Notes
 
