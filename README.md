@@ -1,9 +1,7 @@
-# HTML Canvas Editor
-#### An easy-to-use WYSIWYG HTML canvas editor for your website or mobile application.
+# Images Editor
+#### ImagerJs is a platform-independent, web-based JavaScript Image Uploader with Editing that is very easy to use.
 
-### Drawing ‒ Writing Texts ‒ Sketching ‒ Building Diagrams
-
-<a href="https://carstenschaefer.github.io/DrawerJs/examples/fullscreen/" target="_blank">Show Canvas Demo</a>
+[Show Images Editing Demo](https://carstenschaefer.github.io/ImagerJs/examples/try-imagerjs/)
 
 ***
 
@@ -20,8 +18,8 @@ Here you will find a detailed documentation about the usage and its configuratio
 
 ## Try Demo
 
-<a href="https://carstenschaefer.github.io/ImagerJs/examples/standalone/" target="_blank">ImagerJs Standalone</a>
+[ImagerJs Standalone](https://carstenschaefer.github.io/ImagerJs/examples/standalone/)
 
-<a href="https://carstenschaefer.github.io/ImagerJs/examples/remote-upload/" target="_blank">ImagerJs as a Redactor Plugin with custom load/save functions</a>
+[ImagerJs as a Redactor Plugin with custom load/save functions](https://carstenschaefer.github.io/ImagerJs/examples/remote-upload/)
 
-<a href="https://carstenschaefer.github.io/ImagerJs/examples/standalone-save/" target="_blank">ImagerJs Standalone with custom load/save functions</a>
+[ImagerJs Standalone with custom load/save functions](https://carstenschaefer.github.io/ImagerJs/examples/standalone-save/)
