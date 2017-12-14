@@ -3,7 +3,7 @@
 
 ### Drawing ‒ Writing Texts ‒ Sketching ‒ Building Diagrams
 
-[Show Canvas Demo](https://carstenschaefer.github.io/DrawerJs/examples/fullscreen/)
+<a href="https://carstenschaefer.github.io/DrawerJs/examples/fullscreen/" target="_blank">Show Canvas Demo</a>
 
 ***
 
@@ -20,8 +20,8 @@ Here you will find a detailed documentation about the usage and its configuratio
 
 ## Try Demo
 
-[ImagerJs Standalone](https://carstenschaefer.github.io/ImagerJs/examples/standalone/)
+<a href="https://carstenschaefer.github.io/ImagerJs/examples/standalone/" target="_blank">ImagerJs Standalone</a>
 
-[ImagerJs as a Redactor Plugin with custom load/save functions](https://carstenschaefer.github.io/ImagerJs/examples/remote-upload/)
+<a href="https://carstenschaefer.github.io/ImagerJs/examples/remote-upload/" target="_blank">ImagerJs as a Redactor Plugin with custom load/save functions</a>
 
-[ImagerJs Standalone with custom load/save functions](https://carstenschaefer.github.io/ImagerJs/examples/standalone-save/)
+<a href="https://carstenschaefer.github.io/ImagerJs/examples/standalone-save/" target="_blank">ImagerJs Standalone with custom load/save functions</a>
