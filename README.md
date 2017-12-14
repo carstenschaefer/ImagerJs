@@ -9,8 +9,6 @@
 
 Here you will find more informations about features and a short faq: [ImagerJs](https://www.imagerjs.com)
 
-And here you'll find some examples and you can test it live: [ImagerJs on GitHub](https://github.com/carstenschaefer/ImagerJs)
-
 Here you will find a detailed documentation about the usage and its configuration: [ImagerJs-Docs](https://github.com/carstenschaefer/ImagerJs/wiki)
 
 
