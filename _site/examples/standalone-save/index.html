@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <title>ImagerJs - Standalone</title>
+  <title>ImagerJs Standalone - Storing Data Locally</title>
   <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
   <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
@@ -10,6 +10,9 @@
 
   <script src="../../dist/imagerJs.js"></script>
   <link href="../../dist/imagerJs.css" rel="stylesheet">
+
+  <!-- Include german translations -->
+  <script src="imagerJs-german.js"></script>
 
   <style>
     .imager-edit-container .toolbar {
@@ -38,13 +41,15 @@
       text-align: left;
     }
   </style>
-
 </head>
 <body>
   <div class="container">
     <div class="panel panel-default">
-      <div class="panel-heading"><h3>ImagerJs Standalone - Uploading Data (with german translation)</h3></div>
+      <div class="panel-heading"><h3>ImagerJs Standalone - Storing Data Locally</h3></div>
       <div class="panel-body">
+        <div class="form-group">
+          <button class="btn btn-primary" onclick="addNew()">Add new ImagerJs</button>
+        </div>
         <div class="form-group" id="imagers">
 
         </div>
@@ -52,36 +57,10 @@
     </div>
   </div>
   <script>
+    // apply german translations
+    ImagerJs.translations.set(window.ImagerJsGerman);
 
     var pluginsConfig = {
-      Rotate: {
-        controlsCss: {
-          width: '15px',
-          height: '15px',
-          background: 'white',
-          border: '1px solid black'
-        },
-        controlsTouchCss: {
-          width: '25px',
-          height: '25px',
-          background: 'white',
-          border: '2px solid black'
-        }
-      },
-      Resize: {
-        controlsCss: {
-          width: '15px',
-          height: '15px',
-          background: 'white',
-          border: '1px solid black'
-        },
-        controlsTouchCss: {
-          width: '25px',
-          height: '25px',
-          background: 'white',
-          border: '2px solid black'
-        }
-      },
       Crop: {
         controlsCss: {
           width: '15px',
@@ -96,22 +75,51 @@
           border: '2px solid black'
         }
       },
-      Toolbar: {
-        toolbarSize: 85,
-        toolbarSizeTouch: 43,
-        tooltipEnabled: true,
-        tooltipCss: {
-          color: 'white',
-          background: 'black'
+      Save: {
+        upload: true,
+        uploadFunction: function (imageId, imageData, callback) {
+          // Here should be the code to upload image somewhere
+          // to Azure, Amazon S3 or similar. When upload completes we will have
+          // the url of uploaded image. Then call the function callback(image_url)
+          // to notify ImagerJs that image has been uploaded to the server
+          //
+          // Make sure that returned path is on the same domain that imagerJs was loaded from
+          // or contains proper access-control headers.
+          //
+          // for demo we just use some wallpaper
+          var imager = this;
+
+		  //setTimeout(function() {
+          //))  callback('/example/wallpaper-2997883.jpg');
+          //}, 500); // emulate server call
+
+		  console.log('uploading ' + imageId);
+
+		  var data = imageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
+		  var dataJson = '{ "imageId": "' + imageId + '", "imageData" : "' + data + '" }';
+
+          $.ajax({
+            url: 'https://www.imagerjs.com/api/upload/image',
+			dataType: 'json',
+			data: dataJson,
+            contentType: 'application/json; charset=utf-8',
+            type: 'POST',
+            success: function(imageUrl) {
+              callback(imageUrl); // assuming that server returns an `imageUrl` as a response
+              console.log('uploading success: ' + imageUrl);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+          });
+
+
         }
-      },
-      Delete: {
-        fullRemove: true
       }
     };
 
     var options = {
-      plugins: ['Rotate', 'Crop', 'Resize', 'Save', 'Toolbar', 'Delete', 'Undo'],
+      plugins: ['Rotate', 'Crop', 'Resize', 'Toolbar', 'Save', 'Delete', 'Undo'],
       editModeCss: {
       },
       pluginsConfig: pluginsConfig,
@@ -121,33 +129,17 @@
           { label: 'Large', scale: 0.5, quality: 0.5, percentage: 50 },
           { label: 'Medium', scale: 0.2, quality: 0.2, percentage: 20 },
           { label: 'Small', scale: 0.05, quality: 0.05, percentage: 5 }
-        ],
-        allowCustomSetting: true
-      },
-      contentConfig: {
-        saveImageData: function (imageId, imageData) {
-          try {
-            console.log('Save button clicked! ImageId:', imageId);
-            console.log('ImageData argument here is the image encoded in base64 string. ' +
-              'This function gets called anytime user clicks on `save` button. ' +
-              'If one wants to disable edit after saving, check the `standalone-remote-upload.html` ' +
-              'example file which shows how to upload image on the server ' +
-              'and display it in place of ImagerJs after that.');
-            localStorage.setItem('image_' + imageId, imageData);
-          } catch (err) {
-            console.error(err);
-          }
-        }
+        ]
       }
     };
 
-    var openImager = function () {
+    var addNew = function () {
       var $imageContainer = $(
-        '<div class="image-container">' +
-        '  <img class="imager-test" ' +
-        '       src="" ' +
-        '       style="min-width: 300px; min-height: 200px; width: 300px;">' +
-        '</div>');
+              '<div class="image-container">' +
+              '  <img class="imager-test" ' +
+              '       src="" ' +
+              '       style="min-width: 300px; min-height: 200px; width: 300px;">' +
+              '</div>');
 
       $('#imagers').append($imageContainer);
       var imager = new ImagerJs.Imager($imageContainer.find('img'), options);
@@ -170,9 +162,6 @@
         qualitySelector.update();
       });
     };
-  </script>
-  <script>
-      window.onload = openImager();
   </script>
 </body>
 </html>

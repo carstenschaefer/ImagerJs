@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plugins/toolbar/Toolbar.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plugins/toolbar/Toolbar.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function ($, pluginsCatalog, translations, Toolbar) {
+  var ImagerToolbar = function ToolbarPlugin(imagerInstance, options) {
+    var _this = this;
+    _this.imager = imagerInstance;
+
+    options = options || {};
+
+    var defaultOptions = {
+      tooltipEnabled: true,
+      tooltipCss: null
+    };
+
+    if (_this.imager.touchDevice) {
+      defaultOptions.tooltipEnabled = false;
+    }
+
+    _this.options = $.extend(defaultOptions, options);
+
+    _this.activeButton = null;
+
+    _this.weight = -100;
+  };
+
+  /**
+   * This method will be invoked by Imager when edit mode is enabled.
+   */
+  ImagerToolbar.prototype.onEditStart = function () {
+    var _this = this;
+
+    _this.toolbar = new Toolbar(_this.options);
+    _this.toolbar.getElement()
+      .attr('data-sizeable', 'toolbar-button')
+      .attr('data-cssrules', 'top:($v * -1)');
+
+    var getButtonsResults = _this.imager.invokePluginsMethod('getButtons');
+
+    for (var i = 0; i &lt; getButtonsResults.length; i++) {
+      var plugin = getButtonsResults[i].instance;
+      var buttons = getButtonsResults[i].result;
+
+      for (var b = 0; b &lt; buttons.length; b++) {
+        var btn = buttons[b];
+
+        btn.plugin = plugin;
+
+        var $button = null;
+        if(btn.group === undefined) {
+          $button = _this.toolbar.addButton(
+            btn.classes, btn.iconClasses, btn.tooltip, _this.createHandler(btn)
+          );
+        } else {
+          $button = _this.toolbar.addButtonToGroup(
+            btn.classes, btn.iconClasses, btn.tooltip, btn.group, _this.createHandler(btn)
+          );
+        }
+
+        if (btn.buttonCreatedHandler) {
+          btn.buttonCreatedHandler($button);
+        }
+      }
+    }
+
+    _this.imager.$editContainer.append(_this.toolbar.getElement());
+  };
+
+  ImagerToolbar.prototype.onRemove = function () {
+    if (this.toolbar) {
+      this.toolbar.remove();
+    }
+  };
+
+  ImagerToolbar.prototype.onEditStop = function () {
+    if (this.toolbar) {
+      this.toolbar.remove();
+    }
+  };
+
+  ImagerToolbar.prototype.createHandler = function (btn) {
+    var _this = this;
+
+    return function () {
+      if (_this.activeButton) {
+        if (_this.activeButton.disabledHandler) {
+          _this.activeButton.disabledHandler();
+        }
+      }
+
+      _this.toolbar.clearActiveButton();
+
+      btn.enabledHandler();
+
+      if (btn.applyHandler &amp;&amp; btn.rejectHandler) {
+        _this.activeButton = btn;
+
+        _this.imager.trigger('toolSelected', btn);
+
+        _this.toolbar.setActiveButton(btn.classes);
+
+        _this.toolbar.getElement().addClass('hidden');
+
+        _this.createOperationToolbar(btn);
+      }
+
+      return false;
+    };
+  };
+
+  ImagerToolbar.prototype.createOperationToolbar = function (btn) {
+    var _this = this;
+
+    _this.operationToolbar = new Toolbar(_this.options);
+
+    _this.operationToolbar.addButton('btn-accept', 'fa-check',
+      translations.t('Apply'),
+      function applyOperationHandler() {
+        btn.applyHandler();
+        _this.operationButtonHandler();
+        _this.imager.trigger('toolApply');
+        return false;
+      });
+
+    _this.operationToolbar.addButton('btn-reject', 'fa-times',
+      translations.t('Reject'),
+      function rejectOperationHandler() {
+        btn.rejectHandler();
+        _this.operationButtonHandler();
+        _this.imager.trigger('toolReject');
+        return false;
+      });
+
+    _this.imager.$editContainer.append(_this.operationToolbar.getElement());
+  };
+
+  ImagerToolbar.prototype.operationButtonHandler = function () {
+    this.activeButton = null;
+    this.removeOperationToolbar();
+    this.toolbar.getElement().removeClass('hidden');
+    this.toolbar.clearActiveButton();
+  };
+
+  ImagerToolbar.prototype.removeOperationToolbar = function () {
+    this.operationToolbar.remove();
+    this.operationToolbar = null;
+  };
+
+  ImagerToolbar.prototype.getActiveButton = function () {
+    return this.activeButton;
+  };
+
+  pluginsCatalog.Toolbar = ImagerToolbar;
+
+})(jQuery, ImagerJs.plugins, ImagerJs.translations, window.Toolbar);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ImagerJs.Imager.html">Imager</a></li><li><a href="ImagerJs.plugins.Crop.html">Crop</a></li><li><a href="ImagerJs.plugins.Resize.html">Resize</a></li><li><a href="ImagerJs.plugins.Rotate.html">Rotate</a></li><li><a href="ImagerJs.plugins.Save.html">Save</a></li><li><a href="ImagerJs.plugins.Undo.html">Undo</a></li><li><a href="ImagerJs.progins.Delete.html">Delete</a></li><li><a href="ImagerJs.util.FileSelector.html">FileSelector</a></li><li><a href="RedactorPlugins.ImagerJs.html">ImagerJs</a></li></ul><h3>Namespaces</h3><ul><li><a href="ImagerJs.html">ImagerJs</a></li><li><a href="ImagerJs.plugins.html">plugins</a></li><li><a href="ImagerJs.translations.html">translations</a></li><li><a href="ImagerJs.util.html">util</a></li><li><a href="RedactorPlugins.html">RedactorPlugins</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Aug 30 2016 18:11:43 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

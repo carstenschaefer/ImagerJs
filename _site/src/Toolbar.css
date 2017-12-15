@@ -1,0 +1,114 @@
+ul.toolbar {
+    min-width: 300px;
+    margin-bottom: auto;
+    width: 100%;
+}
+
+ul.toolbar,
+ul.toolbar ul {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    z-index: 1200 !important;
+    background: white;
+    box-shadow: 0px -10px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgb(240, 240, 240);
+}
+
+ul.toolbar ul {
+    z-index: 202 !important;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+ul.toolbar li {
+    list-style-type: none;
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    background: white;
+}
+
+ul.toolbar li a {
+    color: #333;
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+    line-height: 32px;
+}
+
+ul.toolbar li a:focus {
+    outline: none;
+}
+
+ul.toolbar li a i {
+    pointer-events: none;
+}
+
+ul.toolbar li a:hover {
+    color: white;
+    background: #1f78d8;
+}
+
+ul.toolbar li a.active {
+    outline: none;
+    background-color: #1f78d8;
+    color: #fff;
+}
+
+ul.toolbar .group-items-container {
+    padding: 0;
+}
+
+ul.toolbar.toolbar-rightTop {
+    width: 32px;
+    right: -32px;
+    top: 0;
+    left: auto;
+}
+
+ul.toolbar.toolbar-topLeft {
+    height: auto;
+    left: 0;
+    right: auto;
+    top: -32px;
+    bottom: auto;
+}
+
+ul.toolbar.toolbar-topRight {
+    width: auto;
+    height: auto;
+    left: auto;
+    right: 0;
+    top: -32px;
+    bottom: auto;
+}
+
+ul.toolbar.toolbar-bottomLeft {
+    width: 100%;
+    height: auto;
+    left: 0;
+    right: auto;
+    top: auto !important;
+    bottom: -32px;
+}
+
+.toolbar-tooltip {
+    position: absolute;
+    background: black;
+    border-radius: 2px;
+    color: white;
+    font-size: 12px;
+    padding: 5px 8px;
+    transition: opacity 0.2s;
+    opacity: 0;
+    z-index: 99999;
+    display: block;
+    pointer-events: none
+}
+
+.toolbar-tooltip.active {
+    opacity: 1;
+
+}

@@ -1,0 +1,24 @@
+{
+  "name": "imagerJs",
+  "version": "0.0.1",
+  "authors": [
+    "Ustimenko Sergey <ustims@gmail.com>"
+  ],
+  "description": "Redactor plugin for managing images",
+  "main": [
+    "dist/imagerJs.js",
+    "dist/imagerJs.css"
+  ],
+  "license": "COMMERCIAL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+
+  }
+}
