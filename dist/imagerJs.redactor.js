@@ -1,4 +1,4 @@
-/*! imagerJs - 1.0.8 */
+/*! ImagerJs - 1.0.8 */
 
 (function () {
     "use strict";
