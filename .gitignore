@@ -5,6 +5,7 @@ bower_components
 node_modules
 **/node_modules
 *.iml
+dist
 
 ImagerJs.v12.suo
 obj/Debug/ImagerJs.njsprojResolveAssemblyReference.cache
