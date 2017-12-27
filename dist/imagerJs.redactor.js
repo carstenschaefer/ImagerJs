@@ -1,4 +1,4 @@
-/*! imagerJs - 1.0.8 */
+/*! ImagerJs - 1.0.8 */
 
 (function () {
     "use strict";
@@ -6990,3 +6990,5 @@ if (!RedactorPlugins) var RedactorPlugins = {};
     };
   };
 })(jQuery, ImagerJs, window.ImagerQualitySelector, ImagerJs.util, ImagerJs.translations, Modal);
+
+//# sourceMappingURL=imagerJs.redactor.js.map
