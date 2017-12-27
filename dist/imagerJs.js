@@ -1,4 +1,4 @@
-/*! imagerJs - 1.0.8 */
+/*! ImagerJs - 1.0.8 */
 
 (function () {
     "use strict";
@@ -6512,3 +6512,5 @@ var ImagerJs = {
   pluginsCatalog.Undo = Undo;
 
 })(jQuery, ImagerJs.plugins, ImagerJs.util, ImagerJs.translations);
+
+//# sourceMappingURL=imagerJs.js.map
