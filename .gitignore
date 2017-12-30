@@ -6,6 +6,7 @@ node_modules
 **/node_modules
 *.iml
 dist/docs
+npm-debug.log
 
 ImagerJs.v12.suo
 obj/Debug/ImagerJs.njsprojResolveAssemblyReference.cache
