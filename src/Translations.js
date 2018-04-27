@@ -5,7 +5,7 @@
   };
 
   namespace.translations = {
-    'Incorret file type': 'Incorret file type',
+    'Incorrect file type': 'Incorrect file type',
     'Insert': 'Insert',
     'Cancel': 'Cancel',
     'Add image': 'Add image',

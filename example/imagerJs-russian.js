@@ -1,5 +1,5 @@
 window.ImagerJsRussian = {
-  'Incorret file type': 'Неверный формат файла',
+  'Incorrect file type': 'Неверный формат файла',
   'Insert': 'Вставить',
   'Cancel': 'Отмена',
   'Add image': 'Добавить изображение',

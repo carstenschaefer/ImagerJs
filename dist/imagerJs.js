@@ -2971,7 +2971,7 @@ var ImagerJs = {
   };
 
   namespace.translations = {
-    'Incorret file type': 'Incorret file type',
+    'Incorrect file type': 'Incorrect file type',
     'Insert': 'Insert',
     'Cancel': 'Cancel',
     'Add image': 'Add image',
@@ -4374,7 +4374,7 @@ var ImagerJs = {
 
       for (var i = 0; i < e.target.files.length; i++) {
         if(e.target.files[i].type.indexOf('image') < 0) {
-          _this.showError(translations.t('Incorret file type'));
+          _this.showError(translations.t('Incorrect file type'));
           return;
         }
       }
@@ -4407,7 +4407,7 @@ var ImagerJs = {
 
       for (var i = 0; i < files.length; i++) {
         if(files[i].type.indexOf('image') < 0) {
-          _this.showError(translations.t('Incorret file type.'));
+          _this.showError(translations.t('Incorrect file type.'));
           return;
         }
       }

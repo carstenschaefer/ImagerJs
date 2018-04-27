@@ -37,7 +37,7 @@ SOFTWARE.
         } else {
             throw ("Given data is not jpeg.");
         }
-        
+
         var segments = splitIntoSegments(jpeg);
         if (segments[1].slice(0, 2) == "\xff\xe1") {
             segments = [segments[0]].concat(segments.slice(2));
@@ -46,7 +46,7 @@ SOFTWARE.
         } else {
             throw("Exif not found.");
         }
-        
+
         var new_data = segments.join("");
         if (b64) {
             new_data = "data:image/jpeg;base64," + btoa(new_data);
@@ -90,10 +90,10 @@ SOFTWARE.
             } else if (data.slice(0, 4) == "Exif") {
                 input_data = data.slice(6);
             } else {
-                throw ("'load' gots invalid file data.");
+                throw ("'load' got invalid file data.");
             }
         } else {
-            throw ("'load' gots invalid type argument.");
+            throw ("'load' got invalid type argument.");
         }
 
         var exifDict = {};
@@ -651,8 +651,8 @@ SOFTWARE.
             return output;
         };
     }
-    
-    
+
+
     if (typeof atob === "undefined") {
         var atob = function (input) {
             var output = "";
@@ -2120,7 +2120,7 @@ SOFTWARE.
     TAGS["1st"] = TAGS["Image"];
     that.TAGS = TAGS;
 
-    
+
     that.ImageIFD = {
         ProcessingSoftware:11,
         NewSubfileType:254,
@@ -2309,7 +2309,7 @@ SOFTWARE.
         NoiseProfile:51041,
     };
 
-    
+
     that.ExifIFD = {
         ExposureTime:33434,
         FNumber:33437,
@@ -2423,8 +2423,8 @@ SOFTWARE.
     that.InteropIFD = {
         InteroperabilityIndex:1,
     };
-    
-    
+
+
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = that;
