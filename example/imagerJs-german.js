@@ -1,5 +1,5 @@
 window.ImagerJsGerman = {
-  'Incorret file type': 'Unzulässiger Dateityp',
+  'Incorrect file type': 'Unzulässiger Dateityp',
   'Insert': 'Einfügen',
   'Cancel': 'Abbrechen',
   'Add image': 'Bild hinzufügen',

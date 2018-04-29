@@ -8,13 +8,13 @@
     that.remove = function (jpeg) {
         var b64 = false;
         if (jpeg.slice(0, 2) == "\xff\xd8") {
-        } else if (jpeg.slice(0, 23) == "data:image/jpeg;base64,") {
+        } else if (jpeg.slice(0, 23) == "data:image/jpeg;base64," || jpeg.slice(0, 22) == "data:image/jpg;base64,") {
             jpeg = atob(jpeg.split(",")[1]);
             b64 = true;
         } else {
             throw ("Given data is not jpeg.");
         }
-        
+
         var segments = splitIntoSegments(jpeg);
         if (segments[1].slice(0, 2) == "\xff\xe1") {
             segments = [segments[0]].concat(segments.slice(2));
@@ -23,7 +23,7 @@
         } else {
             throw("Exif not found.");
         }
-        
+
         var new_data = segments.join("");
         if (b64) {
             new_data = "data:image/jpeg;base64," + btoa(new_data);
@@ -39,7 +39,7 @@
             throw ("Given data is not exif.");
         }
         if (jpeg.slice(0, 2) == "\xff\xd8") {
-        } else if (jpeg.slice(0, 23) == "data:image/jpeg;base64,") {
+        } else if (jpeg.slice(0, 23) == "data:image/jpeg;base64," || jpeg.slice(0, 22) == "data:image/jpg;base64,") {
             jpeg = atob(jpeg.split(",")[1]);
             b64 = true;
         } else {
@@ -628,8 +628,8 @@
             return output;
         };
     }
-    
-    
+
+
     if (typeof atob === "undefined") {
         var atob = function (input) {
             var output = "";
@@ -2097,7 +2097,7 @@
     TAGS["1st"] = TAGS["Image"];
     that.TAGS = TAGS;
 
-    
+
     that.ImageIFD = {
         ProcessingSoftware:11,
         NewSubfileType:254,
@@ -2286,7 +2286,7 @@
         NoiseProfile:51041,
     };
 
-    
+
     that.ExifIFD = {
         ExposureTime:33434,
         FNumber:33437,
@@ -2400,8 +2400,8 @@
     that.InteropIFD = {
         InteroperabilityIndex:1,
     };
-    
-    
+
+
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = that;
@@ -2829,13 +2829,13 @@ var ImagerJs = {
 
     options = options ? options : {};
     _this.options = $.extend(true, _this.defaultOptions, options);
-        
+
     if (_this.options.allowCustomSetting) {
         _this.options.sizes.push(
             { label: 'Custom' }
-        );  
+        );
     }
-    
+
     _this.imager = imagerInstance;
 
     _this.$qualitySelector = $(
@@ -2971,7 +2971,7 @@ var ImagerJs = {
   };
 
   namespace.translations = {
-    'Incorret file type': 'Incorret file type',
+    'Incorrect file type': 'Incorrect file type',
     'Insert': 'Insert',
     'Cancel': 'Cancel',
     'Add image': 'Add image',
@@ -4374,7 +4374,7 @@ var ImagerJs = {
 
       for (var i = 0; i < e.target.files.length; i++) {
         if(e.target.files[i].type.indexOf('image') < 0) {
-          _this.showError(translations.t('Incorret file type'));
+          _this.showError(translations.t('Incorrect file type'));
           return;
         }
       }
@@ -4407,7 +4407,7 @@ var ImagerJs = {
 
       for (var i = 0; i < files.length; i++) {
         if(files[i].type.indexOf('image') < 0) {
-          _this.showError(translations.t('Incorret file type.'));
+          _this.showError(translations.t('Incorrect file type.'));
           return;
         }
       }
@@ -4903,7 +4903,7 @@ var ImagerJs = {
         var weight = 0;
         var weights = 0;
         var weights_alpha = 0;
-        
+
         var gx_r = 0, gx_g = 0, gx_b = 0, gx_a = 0;
 
         var center_y = (j + 0.5) * ratio_h;
