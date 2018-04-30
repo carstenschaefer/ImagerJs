@@ -14,7 +14,7 @@
         } else {
             throw ("Given data is not jpeg.");
         }
-        
+
         var segments = splitIntoSegments(jpeg);
         if (segments[1].slice(0, 2) == "\xff\xe1") {
             segments = [segments[0]].concat(segments.slice(2));
@@ -23,7 +23,7 @@
         } else {
             throw("Exif not found.");
         }
-        
+
         var new_data = segments.join("");
         if (b64) {
             new_data = "data:image/jpeg;base64," + btoa(new_data);
@@ -67,10 +67,10 @@
             } else if (data.slice(0, 4) == "Exif") {
                 input_data = data.slice(6);
             } else {
-                throw ("'load' gots invalid file data.");
+                throw ("'load' got invalid file data.");
             }
         } else {
-            throw ("'load' gots invalid type argument.");
+            throw ("'load' got invalid type argument.");
         }
 
         var exifDict = {};
@@ -628,8 +628,8 @@
             return output;
         };
     }
-    
-    
+
+
     if (typeof atob === "undefined") {
         var atob = function (input) {
             var output = "";
@@ -2097,7 +2097,7 @@
     TAGS["1st"] = TAGS["Image"];
     that.TAGS = TAGS;
 
-    
+
     that.ImageIFD = {
         ProcessingSoftware:11,
         NewSubfileType:254,
@@ -2286,7 +2286,7 @@
         NoiseProfile:51041,
     };
 
-    
+
     that.ExifIFD = {
         ExposureTime:33434,
         FNumber:33437,
@@ -2400,8 +2400,8 @@
     that.InteropIFD = {
         InteroperabilityIndex:1,
     };
-    
-    
+
+
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = that;
@@ -5105,54 +5105,98 @@ var ImagerJs = {
         var diffLeft = movePos.left - startPos.left;
         var diffTop = movePos.top - startPos.top;
 
-        if ($(controlItem).hasClass('crop-top-left')) {
-          _this.croppedLeft = startControlsLeft + diffLeft;
-          _this.croppedTop = startControlsTop + diffTop;
-
-          _this.croppedWidth = startControlsWidth - diffLeft;
-          _this.croppedHeight = startControlsHeight - diffTop;
-        }
-
-        if ($(controlItem).hasClass('crop-top-right')) {
-          _this.croppedLeft = startControlsLeft;
-          _this.croppedTop = startControlsTop + diffTop;
-
-          _this.croppedWidth = startControlsWidth - (diffLeft * -1);
-          _this.croppedHeight = startControlsHeight - diffTop;
-        }
-
-        if ($(controlItem).hasClass('crop-bottom-right')) {
-          _this.croppedLeft = startControlsLeft;
-          _this.croppedTop = startControlsTop;
-
-          _this.croppedWidth = startControlsWidth - (diffLeft * -1);
-          _this.croppedHeight = startControlsHeight + diffTop;
-        }
-
-        if ($(controlItem).hasClass('crop-bottom-left')) {
-          _this.croppedLeft = startControlsLeft + diffLeft;
-          _this.croppedTop = startControlsTop;
-
-          _this.croppedWidth = startControlsWidth - diffLeft;
-          _this.croppedHeight = startControlsHeight + diffTop;
-        }
-
         // bounds validation
-        if (_this.croppedLeft < 0) {
-          _this.croppedLeft = 0;
+        function validateBounds(){
+          if (_this.croppedLeft < 0) {
+            _this.croppedLeft = 0;
+          }
+
+          if (_this.croppedTop < 0) {
+            _this.croppedTop = 0;
+          }
+
+          if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
+            _this.croppedWidth = _this.originalWidth - _this.croppedLeft;
+          }
+
+          if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
+            _this.croppedHeight = _this.originalHeight - _this.croppedTop;
+          }
         }
 
-        if (_this.croppedTop < 0) {
-          _this.croppedTop = 0;
+        if ($(controlItem).hasClass("crop-top-left")) {
+          _this.croppedLeft = startControlsLeft + diffLeft;
+          _this.croppedTop = startControlsTop + diffTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft;
+          _this.croppedHeight = startControlsHeight - diffTop;
+
+          if (moveEvent.shiftKey) {
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+              _this.croppedLeft = (startControlsWidth - _this.croppedHeight) + startControlsLeft;
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+              _this.croppedTop = (startControlsHeight - _this.croppedWidth) + startControlsTop;
+            }
+          }
         }
 
-        if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
-          _this.croppedWidth = _this.originalWidth - _this.croppedLeft;
+        if ($(controlItem).hasClass("crop-top-right")) {
+          _this.croppedLeft = startControlsLeft;
+          _this.croppedTop = startControlsTop + diffTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft * -1;
+          _this.croppedHeight = startControlsHeight - diffTop;
+
+          if (moveEvent.shiftKey) {
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+              _this.croppedTop = (startControlsHeight - _this.croppedHeight) + startControlsTop;
+            }
+          }
         }
 
-        if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
-          _this.croppedHeight = _this.originalHeight - _this.croppedTop;
+        if ($(controlItem).hasClass("crop-bottom-right")) {
+          _this.croppedLeft = startControlsLeft;
+          _this.croppedTop = startControlsTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft * -1;
+          _this.croppedHeight = startControlsHeight + diffTop;
+
+          if (moveEvent.shiftKey) {
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+            }
+          }
         }
+
+        if ($(controlItem).hasClass("crop-bottom-left")) {
+          _this.croppedLeft = startControlsLeft + diffLeft;
+          _this.croppedTop = startControlsTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft;
+          _this.croppedHeight = startControlsHeight + diffTop;
+
+          if (moveEvent.shiftKey){
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+              _this.croppedLeft = startControlsLeft + (startControlsWidth - _this.croppedWidth);
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+            }
+          }
+        }
+
+        validateBounds();
 
         _this.$cropControls.css({
           left: _this.croppedLeft,
