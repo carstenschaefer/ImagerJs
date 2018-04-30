@@ -67,10 +67,10 @@
             } else if (data.slice(0, 4) == "Exif") {
                 input_data = data.slice(6);
             } else {
-                throw ("'load' gots invalid file data.");
+                throw ("'load' got invalid file data.");
             }
         } else {
-            throw ("'load' gots invalid type argument.");
+            throw ("'load' got invalid type argument.");
         }
 
         var exifDict = {};
@@ -2829,13 +2829,13 @@ var ImagerJs = {
 
     options = options ? options : {};
     _this.options = $.extend(true, _this.defaultOptions, options);
-
+        
     if (_this.options.allowCustomSetting) {
         _this.options.sizes.push(
             { label: 'Custom' }
-        );
+        );  
     }
-
+    
     _this.imager = imagerInstance;
 
     _this.$qualitySelector = $(
@@ -4903,7 +4903,7 @@ var ImagerJs = {
         var weight = 0;
         var weights = 0;
         var weights_alpha = 0;
-
+        
         var gx_r = 0, gx_g = 0, gx_b = 0, gx_a = 0;
 
         var center_y = (j + 0.5) * ratio_h;
@@ -5105,54 +5105,98 @@ var ImagerJs = {
         var diffLeft = movePos.left - startPos.left;
         var diffTop = movePos.top - startPos.top;
 
-        if ($(controlItem).hasClass('crop-top-left')) {
-          _this.croppedLeft = startControlsLeft + diffLeft;
-          _this.croppedTop = startControlsTop + diffTop;
-
-          _this.croppedWidth = startControlsWidth - diffLeft;
-          _this.croppedHeight = startControlsHeight - diffTop;
-        }
-
-        if ($(controlItem).hasClass('crop-top-right')) {
-          _this.croppedLeft = startControlsLeft;
-          _this.croppedTop = startControlsTop + diffTop;
-
-          _this.croppedWidth = startControlsWidth - (diffLeft * -1);
-          _this.croppedHeight = startControlsHeight - diffTop;
-        }
-
-        if ($(controlItem).hasClass('crop-bottom-right')) {
-          _this.croppedLeft = startControlsLeft;
-          _this.croppedTop = startControlsTop;
-
-          _this.croppedWidth = startControlsWidth - (diffLeft * -1);
-          _this.croppedHeight = startControlsHeight + diffTop;
-        }
-
-        if ($(controlItem).hasClass('crop-bottom-left')) {
-          _this.croppedLeft = startControlsLeft + diffLeft;
-          _this.croppedTop = startControlsTop;
-
-          _this.croppedWidth = startControlsWidth - diffLeft;
-          _this.croppedHeight = startControlsHeight + diffTop;
-        }
-
         // bounds validation
-        if (_this.croppedLeft < 0) {
-          _this.croppedLeft = 0;
+        function validateBounds(){
+          if (_this.croppedLeft < 0) {
+            _this.croppedLeft = 0;
+          }
+
+          if (_this.croppedTop < 0) {
+            _this.croppedTop = 0;
+          }
+
+          if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
+            _this.croppedWidth = _this.originalWidth - _this.croppedLeft;
+          }
+
+          if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
+            _this.croppedHeight = _this.originalHeight - _this.croppedTop;
+          }
         }
 
-        if (_this.croppedTop < 0) {
-          _this.croppedTop = 0;
+        if ($(controlItem).hasClass("crop-top-left")) {
+          _this.croppedLeft = startControlsLeft + diffLeft;
+          _this.croppedTop = startControlsTop + diffTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft;
+          _this.croppedHeight = startControlsHeight - diffTop;
+
+          if (moveEvent.shiftKey) {
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+              _this.croppedLeft = (startControlsWidth - _this.croppedHeight) + startControlsLeft;
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+              _this.croppedTop = (startControlsHeight - _this.croppedWidth) + startControlsTop;
+            }
+          }
         }
 
-        if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
-          _this.croppedWidth = _this.originalWidth - _this.croppedLeft;
+        if ($(controlItem).hasClass("crop-top-right")) {
+          _this.croppedLeft = startControlsLeft;
+          _this.croppedTop = startControlsTop + diffTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft * -1;
+          _this.croppedHeight = startControlsHeight - diffTop;
+
+          if (moveEvent.shiftKey) {
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+              _this.croppedTop = (startControlsHeight - _this.croppedHeight) + startControlsTop;
+            }
+          }
         }
 
-        if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
-          _this.croppedHeight = _this.originalHeight - _this.croppedTop;
+        if ($(controlItem).hasClass("crop-bottom-right")) {
+          _this.croppedLeft = startControlsLeft;
+          _this.croppedTop = startControlsTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft * -1;
+          _this.croppedHeight = startControlsHeight + diffTop;
+
+          if (moveEvent.shiftKey) {
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+            }
+          }
         }
+
+        if ($(controlItem).hasClass("crop-bottom-left")) {
+          _this.croppedLeft = startControlsLeft + diffLeft;
+          _this.croppedTop = startControlsTop;
+
+          _this.croppedWidth = startControlsWidth - diffLeft;
+          _this.croppedHeight = startControlsHeight + diffTop;
+
+          if (moveEvent.shiftKey){
+            validateBounds();
+            if (_this.croppedHeight < _this.croppedWidth){
+              _this.croppedWidth = _this.croppedHeight;
+              _this.croppedLeft = startControlsLeft + (startControlsWidth - _this.croppedWidth);
+            } else {
+              _this.croppedHeight = _this.croppedWidth;
+            }
+          }
+        }
+
+        validateBounds();
 
         _this.$cropControls.css({
           left: _this.croppedLeft,
