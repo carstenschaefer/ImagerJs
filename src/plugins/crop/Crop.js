@@ -130,7 +130,7 @@
     });
 
     _this.imager.$editContainer.append(_this.$cropControls);
-    var $selection = _this.$cropControls
+    var $selection = _this.$cropControls;
     var $corners = $selection.find('.crop-corner');
 
     if (_this.imager.touchDevice) {
