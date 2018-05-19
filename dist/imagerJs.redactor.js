@@ -5079,8 +5079,8 @@ var ImagerJs = {
     });
 
     _this.imager.$editContainer.append(_this.$cropControls);
-
-    var $corners = _this.$cropControls.find('.crop-corner');
+    var $selection = _this.$cropControls;
+    var $corners = $selection.find('.crop-corner');
 
     if (_this.imager.touchDevice) {
       $corners.css(_this.options.controlsTouchCss);
@@ -5088,7 +5088,19 @@ var ImagerJs = {
       $corners.css(_this.options.controlsCss);
     }
 
+    function handleCropSelectionChanges(){
+      _this.$cropControls.css({
+        left: _this.croppedLeft,
+        top: _this.croppedTop,
+        width: _this.croppedWidth,
+        height: _this.croppedHeight
+      });
+
+      _this.adjustPreview();
+    }
+
     $corners.on(MOUSE_DOWN, function (clickEvent) {
+      clickEvent.stopPropagation();
       var controlItem = this;
 
       var startPos = util.getEventPosition(clickEvent);
@@ -5198,17 +5210,7 @@ var ImagerJs = {
 
         validateBounds();
 
-        _this.$cropControls.css({
-          left: _this.croppedLeft,
-          top: _this.croppedTop,
-          width: _this.croppedWidth,
-          height: _this.croppedHeight
-        });
-
-        _this.adjustPreview();
-
-        //_this.imager.render();
-        //_this.imager.render(_this.previewCanvas.getContext('2d'));
+        handleCropSelectionChanges();
 
         moveEvent.preventDefault();
         moveEvent.stopPropagation();
@@ -5216,6 +5218,52 @@ var ImagerJs = {
       });
 
       $body.on(MOUSE_UP, function () {
+        $body.off(MOUSE_MOVE);
+        $body.off(MOUSE_UP);
+      });
+    });
+
+    $selection.on(MOUSE_DOWN, function(clickEvent) {
+      var controlItem = this;
+
+      var startPos = util.getEventPosition(clickEvent);
+
+      var startControlsLeft =
+        _this.$cropControls.css("left").replace("px", "") | 0;
+      var startControlsTop =
+        _this.$cropControls.css("top").replace("px", "") | 0;
+
+      $body.on(MOUSE_MOVE, function(moveEvent) {
+        var movePos = util.getEventPosition(moveEvent);
+
+        var diffLeft = movePos.left - startPos.left;
+        var diffTop = movePos.top - startPos.top;
+
+        _this.croppedLeft = startControlsLeft + diffLeft;
+        _this.croppedTop = startControlsTop + diffTop;
+
+        // bounds validation
+        if (_this.croppedLeft < 0) {
+          _this.croppedLeft = 0;
+        }
+        if (_this.croppedTop < 0) {
+          _this.croppedTop = 0;
+        }
+        if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
+          _this.croppedLeft = _this.originalWidth - _this.croppedWidth;
+        }
+        if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
+          _this.croppedTop = _this.originalHeight - _this.croppedHeight;
+        }
+
+        handleCropSelectionChanges();
+
+        moveEvent.preventDefault();
+        moveEvent.stopPropagation();
+        return false;
+      });
+
+      $body.on(MOUSE_UP, function() {
         $body.off(MOUSE_MOVE);
         $body.off(MOUSE_UP);
       });
