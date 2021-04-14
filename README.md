@@ -5,6 +5,12 @@ Crop, rotate, resize, or shrink your image before uploading.
 
 It is a platform-independent, web-based JavaScript Image Uploader that is very easy to use.
 
+## ⚠️ Attention
+
+**This library is no longer maintained**. If you're looking for an alternative you can check out [Doka Image Editor](https://pqina.nl/doka/). It supports every ImagerJs feature and much more (resizing, free rotating, color adjustment, photo filters, annotating, etc).
+
+[![Doka Image Editor demo](doka-image-editor-gh.gif?raw=true "Doka Image Editor (click on the image to view)")](https://pqina.nl/doka/)
+
 ## What is ImagerJs? How can I use it?
 
 Here you will find more informations about features and a short faq: [ImagerJs](https://www.imagerjs.com)
