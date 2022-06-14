@@ -7,9 +7,9 @@ It is a platform-independent, web-based JavaScript Image Uploader that is very e
 
 ## ⚠️ Attention
 
-**This library is no longer maintained**. If you're looking for an alternative you can check out [Doka Image Editor](https://pqina.nl/doka/). It supports every ImagerJs feature and much more (resizing, free rotating, color adjustment, photo filters, annotating, etc).
+**This library is no longer maintained**. If you're looking for an alternative you can check out [Pintura Image Editor](https://pqina.nl/pintura/). It supports every ImagerJs feature and much more (resizing, free rotating, color adjustment, photo filters, annotating, etc).
 
-[![Doka Image Editor demo](doka-image-editor-gh.gif?raw=true "Doka Image Editor (click on the image to view)")](https://pqina.nl/doka/)
+[![Pintura Image Editor demo](doka-image-editor-gh.gif?raw=true "Pintura Image Editor (click on the image to view)")](https://pqina.nl/pintura/)
 
 ## What is ImagerJs? How can I use it?
 
