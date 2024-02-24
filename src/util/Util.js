@@ -42,8 +42,8 @@ export function unbindClick(element, namespace) {
 export function bindClick(element, namespace, handler) {
   var ns = namespace + "drawerBindClick";
 
-  $(element).on("click." + ns, function (event) {
-    var elem = this;
+  $(element).on("click." + ns, (event) => {
+    var elem = getTarget(event);
     var result = null;
 
     if (elem.__lastClickTime) {
@@ -67,16 +67,16 @@ export function bindClick(element, namespace, handler) {
       }
     }
   });
-  $(element).on("touchstart." + ns, function (event) {
-    var elem = this;
+  $(element).on("touchstart." + ns, (event) => {
+    var elem = getTarget(event);
 
     elem.__drawerTouchStartEvent = event;
 
     // disable click entirely since we do everything with touch events
     $(element).off("click." + ns);
   });
-  $(element).on("touchend." + ns, function (event) {
-    var elem = this;
+  $(element).on("touchend." + ns, (event) => {
+    var elem = getTarget(event);
 
     if (elem.__drawerTouchStartEvent) {
       var tsDiff = Math.abs(
@@ -101,8 +101,8 @@ export function bindDoubleTap(element, namespace, handler) {
   var timeWindow = 500;
   var positionWindow = 20;
 
-  $(element).on("touchend." + namespace, function (event) {
-    var eventElem = this;
+  $(element).on("touchend." + namespace, (event) => {
+    var eventElem = getTarget(event);
     if (eventElem.__touchEndTime) {
       var diff = Date.now() - eventElem.__touchEndTime;
       var xDiff = Math.abs(eventElem.__touchEndX - event.originalEvent.pageX);
@@ -144,8 +144,8 @@ export function bindLongPress(element, namespace, handler) {
   var logTag = "drawerBindLongPress";
   var ns = namespace + logTag;
 
-  $(element).on("touchstart." + ns, function (event) {
-    var elem = this;
+  $(element).on("touchstart." + ns, (event) => {
+    var elem = getTarget(event);
 
     elem.__touchStartTime = Date.now();
     elem.__touchStartX = event.originalEvent.pageX;
@@ -467,4 +467,13 @@ export function resizeImage(canvas, W, H, W2, H2) {
   canvas.width = W2;
   canvas.height = H2;
   canvas.getContext("2d").putImageData(img2, 0, 0);
+}
+
+export function getTarget(event) {
+  if (!event.target) {
+    console.log(event);
+    throw new Error("event.target not found");
+  }
+
+  return event.target;
 }

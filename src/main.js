@@ -1,8 +1,8 @@
 import Imager from "./ImagerJs";
-import QualitySelector from "./QualitySelector";
-import './imagerJs.css';
+import "./imagerJs.css";
+import FileSelector from "./util/FileSelector";
 
 window.ImagerJs = {
   Imager,
-  ImagerQualitySelector: QualitySelector
+  FileSelector,
 };

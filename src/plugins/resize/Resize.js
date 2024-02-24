@@ -88,7 +88,7 @@ export default class ResizePlugin {
       const ratioHeight = startDimensions.width / startDimensions.height;
 
       $body.on(MOUSE_MOVE, (moveEvent) => {
-        var movePos = util.getEventPosition(moveEvent);
+        var movePos = getEventPosition(moveEvent);
 
         var leftDiff = movePos.left - startPos.left;
         var topDiff = movePos.top - startPos.top;

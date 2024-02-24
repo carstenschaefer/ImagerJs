@@ -2575,8 +2575,8 @@
   init_live_reload();
   function bindClick(element, namespace, handler) {
     var ns = namespace + "drawerBindClick";
-    $(element).on("click." + ns, function(event) {
-      var elem = this;
+    $(element).on("click." + ns, (event) => {
+      var elem = getTarget(event);
       var result = null;
       if (elem.__lastClickTime) {
         var lastClickDiff = Date.now() - elem.__lastClickTime;
@@ -2598,13 +2598,13 @@
         }
       }
     });
-    $(element).on("touchstart." + ns, function(event) {
-      var elem = this;
+    $(element).on("touchstart." + ns, (event) => {
+      var elem = getTarget(event);
       elem.__drawerTouchStartEvent = event;
       $(element).off("click." + ns);
     });
-    $(element).on("touchend." + ns, function(event) {
-      var elem = this;
+    $(element).on("touchend." + ns, (event) => {
+      var elem = getTarget(event);
       if (elem.__drawerTouchStartEvent) {
         var tsDiff = Math.abs(
           elem.__drawerTouchStartEvent.timeStamp - event.timeStamp
@@ -2727,6 +2727,13 @@
     canvas.height = H2;
     canvas.getContext("2d").putImageData(img2, 0, 0);
   }
+  function getTarget(event) {
+    if (!event.target) {
+      console.log(event);
+      throw new Error("event.target not found");
+    }
+    return event.target;
+  }
 
   // src/Toolbar.js
   var Toolbar = class {
@@ -2820,7 +2827,7 @@
         $tooltip.css(this.options.tooltipCss);
       }
       $button.on("mouseenter", (e) => {
-        if ($(e.target).hasClass("disabled"))
+        if ($(getTarget(e)).hasClass("disabled"))
           return;
         var btnPos = $button.offset();
         var btnHeight = $button.innerHeight();
@@ -2965,7 +2972,7 @@
       };
       $corners.on(MOUSE_DOWN, (clickEvent) => {
         clickEvent.stopPropagation();
-        var controlItem = clickEvent.target;
+        var controlItem = getTarget(clickEvent);
         var startPos = getEventPosition(clickEvent);
         var startControlsLeft = this.$cropControls.css("left").replace("px", "") | 0;
         var startControlsTop = this.$cropControls.css("top").replace("px", "") | 0;
@@ -3126,9 +3133,9 @@
       if (this.croppedWidth === null || !this.enableRendering) {
         return;
       }
-      var previewSize = this.imager.getPreviewSize();
-      var previewWidth = previewSize.width;
-      var previewHeight = previewSize.height;
+      let previewSize = this.imager.getPreviewSize();
+      let previewWidth = previewSize.width;
+      let previewHeight = previewSize.height;
       if (this.sizeBeforeCrop) {
         previewWidth = this.sizeBeforeCrop.width;
         previewHeight = this.sizeBeforeCrop.height;
@@ -3515,7 +3522,7 @@
         const ratioWidth = startDimensions.height / startDimensions.width;
         const ratioHeight = startDimensions.width / startDimensions.height;
         $body2.on(MOUSE_MOVE3, (moveEvent) => {
-          var movePos = util.getEventPosition(moveEvent);
+          var movePos = getEventPosition(moveEvent);
           var leftDiff = movePos.left - startPos.left;
           var topDiff = movePos.top - startPos.top;
           if (this.options.doubleDiff) {
@@ -4240,7 +4247,6 @@
         }
       }
       this.$originalImage = this.$imageElement.clone();
-      this.handleImageElementSrcChanged();
       this.pluginsInstances = null;
       this.instantiatePlugins(pluginsCatalog);
       $("body").on("imagerResize", () => {
@@ -4475,41 +4481,18 @@
       image.src = imageBase64Data;
       return deferred.promise();
     }
-    startSelector() {
-      this.$selectorContainer = $(
-        '<div class="imager-selector-container" tabindex="1"></div>'
-      );
-      var onImagerReady = () => {
-        this.off("ready", onImagerReady);
-        this.startEditing();
-        this.$selectorContainer.remove();
-        this.$selectorContainer = null;
-      };
+    init(file) {
       var onImageLoad = () => {
         this.$imageElement.off("load", onImageLoad);
         this.handleImageElementSrcChanged();
-        this.on("ready", onImagerReady);
       };
-      var fileSelector = new FileSelector("image/*");
-      fileSelector.onFileSelected((file) => {
-        setWaiting(this.$selectorContainer, translate("Please wait..."));
-        setTimeout(() => {
-          this.$imageElement.attr("src", file.data);
-          this.$imageElement.css("height", "auto");
-          this.$imageElement.css("min-height", "inherit");
-          this.$imageElement.css("min-width", "inherit");
-          this.$imageElement.on("load", onImageLoad);
-        }, 200);
-      });
-      this.$selectorContainer.append(fileSelector.getElement());
-      $("body").append(this.$selectorContainer);
-      var imageOffset = this.$imageElement.offset();
-      this.$selectorContainer.css({
-        left: imageOffset.left,
-        top: imageOffset.top,
-        width: this.$imageElement.width(),
-        height: this.$imageElement.height()
-      });
+      setTimeout(() => {
+        this.$imageElement.attr("src", file.data);
+        this.$imageElement.css("height", "auto");
+        this.$imageElement.css("min-height", "inherit");
+        this.$imageElement.css("min-width", "inherit");
+        this.$imageElement.on("load", onImageLoad);
+      }, 200);
     }
     startEditing() {
       this.log("startEditing()");
@@ -4951,14 +4934,6 @@
           height: this.$imageElement.height()
         });
       }
-      if (this.$selectorContainer) {
-        this.$selectorContainer.css({
-          left: imageOffset.left,
-          top: imageOffset.top,
-          width: this.$imageElement.width(),
-          height: this.$imageElement.attr("src") ? this.$imageElement.height() : "auto"
-        });
-      }
     }
     restoreOriginal() {
       this.$imageElement.replaceWith(this.$originalImage);
@@ -5144,99 +5119,9 @@
     }
   };
 
-  // src/QualitySelector.js
-  init_live_reload();
-  var QualitySelector = class {
-    constructor(imagerInstance, options) {
-      this.defaultOptions = {
-        sizes: [
-          { label: "Original", scale: 1, quality: 1, percentage: 100 },
-          { label: "Large", scale: 0.5, quality: 0.5, percentage: 50 },
-          { label: "Medium", scale: 0.2, quality: 0.2, percentage: 20 },
-          { label: "Small", scale: 0.05, quality: 0.05, percentage: 5 }
-        ],
-        allowCustomSetting: true
-      };
-      options = options ? options : {};
-      this.options = $.extend(true, this.defaultOptions, options);
-      if (this.options.allowCustomSetting) {
-        this.options.sizes.push({ label: "Custom" });
-      }
-      this.imager = imagerInstance;
-      this.$qualitySelector = $(
-        '<div class="imager-quality-wrapper"><form><div class="imager-quality-container form-group"><label for="imager-quality">' + translate("Quality") + '</label><select id="imager-quality" class="form-control"></select></div></form><form class="form-inline custom-quality hidden"><div class="form-group"><label for="imager-quality-custom" class="imager-quality-custom">' + translate("Custom quality percent") + '</label><div class="input-group"><input id="imager-quality-custom" type="number" min="1" max="100"class="form-control imager-quality-custom" value="100"/><div class="input-group-addon">%</div><div class="size-in-kb"></div></div></div></form></div>'
-      ).addClass("hidden");
-      this.$qualitySelector.find("input.imager-quality-custom").change((e) => {
-        var customQuality = +e.target.value;
-        this.imager.quality = customQuality / 100;
-        this.imager.targetScale = customQuality / 100;
-        this.imager.render();
-        var size = this.imager.getDataSize() / 1024;
-        var sizeText = Math.round(size) + " " + translate("KB");
-        this.$qualitySelector.find(".size-in-kb").text(sizeText);
-      });
-      this.$qualitySelector.find("select").on("change", (e) => {
-        var value = +e.target.value;
-        var selectedQuality = this.options.sizes[value];
-        if (selectedQuality === null || selectedQuality === void 0) {
-          selectedQuality = _this.options.sizes[0];
-        }
-        if (selectedQuality.label == "Custom") {
-          this.$qualitySelector.find("form.custom-quality").removeClass("hidden");
-          this.$qualitySelector.addClass("custom-quality-visible");
-          this.imager.$imageElement.addClass("custom-quality-visible");
-        } else {
-          this.$qualitySelector.find("form.custom-quality").addClass("hidden");
-          this.$qualitySelector.removeClass("custom-quality-visible");
-          this.imager.$imageElement.removeClass("custom-quality-visible");
-        }
-        $("body").trigger("imagerResize");
-        this.imager.adjustEditContainer();
-        this.imager.quality = selectedQuality.quality ? selectedQuality.quality : 0.5;
-        this.imager.targetScale = selectedQuality.scale ? selectedQuality.scale : 0.5;
-        this.imager.render();
-      });
-    }
-    hide() {
-      return this.$qualitySelector;
-    }
-    hide() {
-      var selected = this.$qualitySelector.find("option:selected").val();
-      this.$qualitySelector.find("option").remove();
-      for (var i = 0; i < this.options.sizes.length; i++) {
-        var s = this.options.sizes[i];
-        var label = translate(s.label);
-        if (s.percentage !== void 0) {
-          this.imager.quality = s.quality;
-          this.imager.targetScale = s.scale;
-          this.imager.render();
-          var size = this.imager.getDataSize() / 1024;
-          label += " - " + Math.round(size) + " " + translate("KB") + " (" + s.percentage + "%)";
-        }
-        var $swatch = $('<option value="' + i + '">' + label + "</option>");
-        this.$qualitySelector.find("select").append($swatch);
-      }
-      if (selected) {
-        this.$qualitySelector.find("select").val(selected);
-      } else {
-        this.$qualitySelector.find("select").val(0);
-      }
-      this.$qualitySelector.find("select").trigger("change");
-    }
-    hide() {
-      this.$qualitySelector.find("select").val.apply(this.$qualitySelector, arguments);
-    }
-    hide() {
-      this.$qualitySelector.removeClass("hidden");
-    }
-    hide() {
-      this.$qualitySelector.addClass("hidden");
-    }
-  };
-
   // src/main.js
   window.ImagerJs = {
     Imager,
-    ImagerQualitySelector: QualitySelector
+    FileSelector
   };
 })();

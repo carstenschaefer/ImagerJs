@@ -199,7 +199,7 @@ export default class Imager {
 
     this.$originalImage = this.$imageElement.clone();
 
-    this.handleImageElementSrcChanged();
+    // this.handleImageElementSrcChanged();
 
     /**
      * Imager will instantiate all plugins and store them here.
@@ -515,52 +515,21 @@ export default class Imager {
     return deferred.promise();
   }
 
-  startSelector() {
-    this.$selectorContainer = $(
-      '<div class="imager-selector-container" tabindex="1"></div>'
-    );
-
-    var onImagerReady = () => {
-      this.off("ready", onImagerReady);
-
-      this.startEditing();
-      this.$selectorContainer.remove();
-      this.$selectorContainer = null;
-    };
-
+  init(file) {
     var onImageLoad = () => {
       this.$imageElement.off("load", onImageLoad);
 
       this.handleImageElementSrcChanged();
-      this.on("ready", onImagerReady);
     };
 
-    var fileSelector = new FileSelector("image/*");
-    fileSelector.onFileSelected((file) => {
-      util.setWaiting(this.$selectorContainer, translate("Please wait..."));
+    setTimeout(() => {
+      this.$imageElement.attr("src", file.data);
+      this.$imageElement.css("height", "auto");
+      this.$imageElement.css("min-height", "inherit");
+      this.$imageElement.css("min-width", "inherit");
 
-      setTimeout(() => {
-        this.$imageElement.attr("src", file.data);
-        this.$imageElement.css("height", "auto");
-        this.$imageElement.css("min-height", "inherit");
-        this.$imageElement.css("min-width", "inherit");
-
-        this.$imageElement.on("load", onImageLoad);
-      }, 200);
-    });
-
-    this.$selectorContainer.append(fileSelector.getElement());
-
-    $("body").append(this.$selectorContainer);
-
-    var imageOffset = this.$imageElement.offset();
-
-    this.$selectorContainer.css({
-      left: imageOffset.left,
-      top: imageOffset.top,
-      width: this.$imageElement.width(),
-      height: this.$imageElement.height(),
-    });
+      this.$imageElement.on("load", onImageLoad);
+    }, 200);
   }
 
   startEditing() {
@@ -1142,17 +1111,6 @@ export default class Imager {
         top: imageOffset.top,
         width: this.$imageElement.width(),
         height: this.$imageElement.height(),
-      });
-    }
-
-    if (this.$selectorContainer) {
-      this.$selectorContainer.css({
-        left: imageOffset.left,
-        top: imageOffset.top,
-        width: this.$imageElement.width(),
-        height: this.$imageElement.attr("src")
-          ? this.$imageElement.height()
-          : "auto",
       });
     }
   }

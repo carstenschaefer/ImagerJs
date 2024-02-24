@@ -4,7 +4,8 @@
     bottom: -5px;
     width: 20px;
     height: 20px;
-    background: black;
+    background: white;
+    border: 1px solid black;
     z-index: 1101;
     cursor: nwse-resize;
 }

@@ -52,14 +52,16 @@
           <button class="btn btn-primary" onclick="addNew()">Add new ImagerJs</button>
         </div>
         <div class="form-group" id="imagers">
-
+          <div class="image-container">
+            <img id="img_sing" class="imager-test" src="" style="min-width: 300px; min-height: 200px; width: 300px;">
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <script>
+  <script defer>
 
-    var pluginsConfig = {
+    const pluginsConfig = {
       Rotate: {
         controlsCss: {
           width: '15px',
@@ -116,7 +118,7 @@
       }
     };
 
-    var options = {
+    const options = {
       plugins: ['Rotate', 'Crop', 'Resize', 'Save', 'Toolbar', 'Delete', 'Undo'],
       editModeCss: {
       },
@@ -148,34 +150,55 @@
     };
 
     var addNew = function () {
-      var $imageContainer = $(
-        '<div class="image-container">' +
-        '  <img class="imager-test" ' +
-        '       src="" ' +
-        '       style="min-width: 300px; min-height: 200px; width: 300px;">' +
-        '</div>');
 
-      $('#imagers').append($imageContainer);
-      var imager = new ImagerJs.Imager($imageContainer.find('img'), options);
-      imager.startSelector();
+      const imager = new ImagerJs.Imager($('#img_sing'), options);
+      const fileSelector = new ImagerJs.FileSelector('image/*');
 
-      imager.on('editStart', function () {
-        // fix image dimensions so that it could be properly placed on the grid
-        imager.$imageElement.css({
-          minWidth: 'auto',
-          minHeight: 'auto'
-        });
+      const $selectorContainer = $(
+        '<div class="imager-selector-container" tabindex="1"></div>'
+      );
 
-        // var qualitySelector = new ImagerJs.ImagerQualitySelector(imager, options.quality);
+      function onImagerReady() {
+        imager.off('ready', onImagerReady);
 
-        // var qualityContainer = $('<div class="imager-quality-standalone"></div>');
-        // qualityContainer.append(qualitySelector.getElement());
+        imager.startEditing();
+        $selectorContainer.remove();
+      };
 
-        // imager.$editContainer.append(qualityContainer);
+      function onImageLoad() {
+        imager.$imageElement.off('load', onImageLoad);
 
-        // qualitySelector.show();
-        // qualitySelector.update();
+        imager.handleImageElementSrcChanged();
+        imager.on('ready', onImagerReady);
+      };
+
+      fileSelector.onFileSelected(function (file) {
+        // util.setWaiting(imager.$selectorContainer, translations.t('Please wait...'));
+        imager.init(file);
+
+        setTimeout(function () {
+          imager.$imageElement.attr('src', file.data);
+          imager.$imageElement.css('height', 'auto');
+          imager.$imageElement.css('min-height', 'inherit');
+          imager.$imageElement.css('min-width', 'inherit');
+
+          imager.$imageElement.on('load', onImageLoad);
+        }, 200);
       });
+
+      $selectorContainer.append(fileSelector.getElement());
+
+      $('body').append($selectorContainer);
+
+      var imageOffset = imager.$imageElement.offset();
+
+      $selectorContainer.css({
+        left: imageOffset.left,
+        top: imageOffset.top,
+        width: imager.$imageElement.width(),
+        height: imager.$imageElement.height()
+      });
+
     };
   </script>
 </body>

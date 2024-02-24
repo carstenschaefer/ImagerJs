@@ -152,7 +152,7 @@ export default class CropPlugin {
 
     $corners.on(MOUSE_DOWN, (clickEvent) => {
       clickEvent.stopPropagation();
-      var controlItem = clickEvent.target;
+      var controlItem = util.getTarget(clickEvent);
 
       var startPos = util.getEventPosition(clickEvent);
 
@@ -386,10 +386,10 @@ export default class CropPlugin {
       return;
     }
 
-    var previewSize = this.imager.getPreviewSize();
+    let previewSize = this.imager.getPreviewSize();
 
-    var previewWidth = previewSize.width;
-    var previewHeight = previewSize.height;
+    let previewWidth = previewSize.width;
+    let previewHeight = previewSize.height;
 
     if (this.sizeBeforeCrop) {
       previewWidth = this.sizeBeforeCrop.width;

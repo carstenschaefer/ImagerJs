@@ -1,7 +1,7 @@
 import "./Toolbar.css";
 import { translate } from "./Translations";
 
-import { bindClick } from "./util/Util";
+import { bindClick, getTarget } from "./util/Util";
 
 export class Toolbar {
   constructor(options) {
@@ -154,7 +154,7 @@ export class Toolbar {
     }
 
     $button.on("mouseenter", e=> {
-      if ($(e.target).hasClass("disabled")) return;
+      if ($(getTarget(e)).hasClass("disabled")) return;
 
       var btnPos = $button.offset();
       var btnHeight = $button.innerHeight();
