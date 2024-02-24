@@ -1,9 +1,12 @@
 {
-  "name": "ImagerJs",
+  "name": "imagerjs",
   "description": "Library for uploading images",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "",
   "license": "MIT",
+  "exports": {
+    ".": "./src/ImagerJs.js"
+  },
   "scripts": {
     "start": "node build.js --serve --dev",
     "build": "node build.js"

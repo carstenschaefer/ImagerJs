@@ -4256,6 +4256,8 @@
         this.adjustEditContainer();
       });
     }
+    destroy() {
+    }
     on(event, handler) {
       this._eventEmitter.on(event, handler);
     }

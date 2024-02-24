@@ -217,6 +217,10 @@ export default class Imager {
     });
   }
 
+  destroy() {
+    
+  }
+
   on(event, handler) {
     this._eventEmitter.on(event, handler);
   }
