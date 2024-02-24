@@ -119,19 +119,9 @@
     };
 
     const options = {
-      plugins: ['Rotate', 'Crop', 'Resize', 'Save', 'Toolbar', 'Delete', 'Undo'],
       editModeCss: {
       },
       pluginsConfig: pluginsConfig,
-      quality: {
-        sizes: [
-          { label: 'Original', scale: 1, quality: 1, percentage: 100 },
-          { label: 'Large', scale: 0.5, quality: 0.5, percentage: 50 },
-          { label: 'Medium', scale: 0.2, quality: 0.2, percentage: 20 },
-          { label: 'Small', scale: 0.05, quality: 0.05, percentage: 5 }
-        ],
-        allowCustomSetting: true
-      },
       contentConfig: {
         saveImageData: function (imageId, imageData) {
           try {

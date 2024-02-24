@@ -15,18 +15,17 @@ import FileSelector from "./util/FileSelector";
 import * as util from "./util/Util";
 
 const imagerInstances = [];
-const pluginsCatalog = [
+const pluginsCatalog = {
   Modal,
-  Toolbar,
-  CropPlugin,
-  DeletePlugin,
-  PropertiesPlugin,
-  ResizePlugin,
-  RotatePlugin,
-  SavePlugin,
-  ToolbarPlugin,
-  UndoPlugin,
-];
+  Crop: CropPlugin,
+  Delete: DeletePlugin,
+  // Properties: PropertiesPlugin,
+  Resize: ResizePlugin,
+  Rotate: RotatePlugin,
+  Save: SavePlugin,
+  Toolbar: ToolbarPlugin,
+  Undo: UndoPlugin,
+};
 
 const PLATFORM = {
   ios: "ios",
@@ -128,7 +127,6 @@ export default class Imager {
       loadData: undefined,
       quality: 1,
       targetScale: 1,
-      plugins: [],
       format: undefined,
       toolbarButtonSize: 32,
       toolbarButtonSizeTouch: 50,
@@ -218,7 +216,7 @@ export default class Imager {
   }
 
   destroy() {
-    
+    this.remove();
   }
 
   on(event, handler) {
@@ -232,12 +230,10 @@ export default class Imager {
   trigger(event, args) {
     this._eventEmitter.trigger(event, args);
 
-    var eventMethodName =
+    const eventMethodName =
       "on" + event.substr(0, 1).toUpperCase() + event.substr(1);
 
-    for (var i = 0; i < this.pluginsInstances.length; i++) {
-      var p = this.pluginsInstances[i];
-
+    for (const p of this.pluginsInstances) {
       if (p[eventMethodName] !== undefined) {
         p[eventMethodName](args);
       }
@@ -252,15 +248,10 @@ export default class Imager {
   }
 
   invokePluginsMethod(methodName) {
-    var results = [];
+    const results = [];
+    const args = Array.prototype.slice.call(arguments).slice(1);
 
-    var args = Array.prototype.slice.call(arguments);
-
-    args = args.slice(1); // remove method name
-
-    for (var i = 0; i < this.pluginsInstances.length; i++) {
-      var p = this.pluginsInstances[i];
-
+    for (const p of this.pluginsInstances) {
       if (p[methodName] !== undefined) {
         var result = p[methodName].apply(p, args);
 
@@ -304,9 +295,11 @@ export default class Imager {
    * Iterates through plugins array from config and instantiates them.
    */
   instantiatePlugins(plugins) {
-    this.pluginsInstances = plugins.map(
-      (t) => new t(this, {}) // this.options.pluginsConfig[pluginName]  TODO
-    );
+    this.pluginsInstances = Object.entries(plugins).map(([name, cls]) => {
+      const instance = new cls(this, this.options.pluginsConfig[name] || {});
+      instance.__name = name;
+      return instance;
+    });
 
     this.pluginsInstances.sort(this.pluginSort);
   }
