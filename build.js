@@ -1,18 +1,12 @@
 const esbuild = require("esbuild");
 const {
   existsSync,
-  writeFileSync,
-  readFileSync,
   readdirSync,
-  statSync,
 } = require("fs");
-const { join } = require("path");
 
 const dev = process.argv.includes("--dev");
 const analyze = process.argv.includes("--analyze");
 const port = 8989;
-
-const outdir = dev ? "public/build" : "public/dist";
 
 /**
  * @type {import("esbuild").BuildOptions}
@@ -20,12 +14,12 @@ const outdir = dev ? "public/build" : "public/dist";
 const config = {
   entryPoints: ["src/main.js"],
   bundle: true,
-  outdir,
+  outdir: "public/build",
   minify: !dev,
   metafile: analyze,
   plugins: [],
   sourcemap: "external",
-  loader: { '.gif': "file", '.cur': "file" },
+  loader: { ".gif": "file", ".cur": "file" },
   define: { server_port: String(port) },
   inject: [dev && "live-reload.js"].filter(Boolean),
 };
