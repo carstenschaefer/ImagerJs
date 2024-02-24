@@ -1,260 +1,268 @@
-(function ($, pluginsCatalog, util, translations) {
-  var MOUSE_DOWN = util.mouseDown('imagerjsCrop');
-  var MOUSE_UP = util.mouseUp('imagerjsCrop');
-  var MOUSE_MOVE = util.mouseMove('imagerjsCrop');
+import { translate } from "../../Translations";
+import * as util from "../../util/Util";
+import './Crop.css';
 
-  /**
-   * Cropping plugin. Provides a button which allows to enter in
-   * cropping mode and select image area to crop.
-   *
-   * @param imagerInstance
-   *
-   * @param options {Object} Cropping controls options.
-   * @param options.controlsCss {Object} Css properties that will be applied to
-   * cropping controls.
-   *
-   * @param options.controlsTouchCss {Object} Css properties that will
-   * be applied to cropping controls when on touch device.
-   *
-   * @constructor
-   * @memberof ImagerJs.plugins
-   */
-  var Crop = function CropPlugin(imagerInstance, options) {
-    var _this = this;
+const MOUSE_DOWN = util.mouseDown("imagerjsCrop");
+const MOUSE_UP = util.mouseUp("imagerjsCrop");
+const MOUSE_MOVE = util.mouseMove("imagerjsCrop");
 
-    _this.weight = 0;
+/**
+ * Cropping plugin. Provides a button which allows to enter in
+ * cropping mode and select image area to crop.
+ *
+ * @param imagerInstance
+ *
+ * @param options {Object} Cropping controls options.
+ * @param options.controlsCss {Object} Css properties that will be applied to
+ * cropping controls.
+ *
+ * @param options.controlsTouchCss {Object} Css properties that will
+ * be applied to cropping controls when on touch device.
+ *
+ * @constructor
+ * @memberof ImagerJs.plugins
+ */
+export default class CropPlugin {
+  constructor(imagerInstance, options) {
+    this.weight = 0;
 
-    _this.imager = imagerInstance;
+    this.imager = imagerInstance;
 
-    _this.defaultOptions = {
+    this.defaultOptions = {
       controlsCss: {},
-      controlsTouchCss: {}
+      controlsTouchCss: {},
     };
 
     options = options ? options : {};
-    _this.options = $.extend(true, _this.defaultOptions, options);
+    this.options = $.extend(true, this.defaultOptions, options);
 
-    _this.originalWidth = null;
-    _this.originalHeight = null;
+    this.originalWidth = null;
+    this.originalHeight = null;
 
-    _this.croppedWidth = null;
-    _this.croppedHeight = null;
-    _this.croppedLeft = null;
-    _this.croppedTop = null;
-  };
+    this.croppedWidth = null;
+    this.croppedHeight = null;
+    this.croppedLeft = null;
+    this.croppedTop = null;
+  }
 
-  Crop.prototype.getButtons = function () {
-    var _this = this;
+  getButtons() {
+    return [
+      {
+        classes: "btn-crop",
+        iconClasses: "fa-scissors",
+        tooltip: translate("Crop"),
+        enabledHandler: () =>  {
+          if (this.sizeBeforeCrop) {
+            this.imager.setPreviewSize(
+              this.sizeBeforeCrop.width,
+              this.sizeBeforeCrop.height
+            );
+          }
 
-    return [{
-      classes: 'btn-crop',
-      iconClasses: 'fa-scissors',
-      tooltip: translations.t('Crop'),
-      enabledHandler: function () {
-        if (_this.sizeBeforeCrop) {
-          _this.imager.setPreviewSize(
-            _this.sizeBeforeCrop.width,
-            _this.sizeBeforeCrop.height
-          );
-        }
+          this.enableRendering = false;
 
-        _this.enableRendering = false;
+          this.imager.render();
 
-        _this.imager.render();
+          this.startCropping();
+        },
 
-        _this.startCropping();
+        applyHandler: () =>  {
+          this.sizeBeforeCrop = this.imager.getPreviewSize();
+
+          this.stopCropping();
+          this.enableRendering = true;
+
+          this.imager.setPreviewSize(this.croppedWidth, this.croppedHeight);
+
+          this.imager.setWaiting(true);
+
+          setTimeout(() =>  {
+            this.imager.commitChanges("Crop");
+            this.reset();
+            this.imager.render();
+
+            this.imager.setWaiting(false);
+          }, 50);
+        },
+        rejectHandler: () =>  {
+          this.stopCropping();
+
+          this.croppedWidth = null;
+          this.croppedHeight = null;
+          this.croppedLeft = null;
+          this.croppedTop = null;
+
+          this.imager.render();
+        },
       },
+    ];
+  }
 
-      applyHandler: function () {
-        _this.sizeBeforeCrop = _this.imager.getPreviewSize();
-
-        _this.stopCropping();
-        _this.enableRendering = true;
-
-        _this.imager.setPreviewSize(_this.croppedWidth, _this.croppedHeight);
-
-        _this.imager.setWaiting(true);
-
-        setTimeout(function () {
-          _this.imager.commitChanges('Crop');
-          _this.reset();
-          _this.imager.render();
-
-          _this.imager.setWaiting(false);
-        }, 50);
-      },
-      rejectHandler: function () {
-        _this.stopCropping();
-
-        _this.croppedWidth = null;
-        _this.croppedHeight = null;
-        _this.croppedLeft = null;
-        _this.croppedTop = null;
-
-        _this.imager.render();
-      }
-    }];
-  };
-
-  Crop.prototype.startCropping = function () {
-    var _this = this;
-
+  startCropping() {
     // show original image to user when cropping mode is on
-    _this.renderCropped = false;
-    _this.imager.render();
+    this.renderCropped = false;
+    this.imager.render();
 
-    $body = $('body');
+    const $body = $("body");
 
     var previewSize = this.imager.getPreviewSize();
-    _this.originalWidth = previewSize.width;
-    _this.originalHeight = previewSize.height;
+    this.originalWidth = previewSize.width;
+    this.originalHeight = previewSize.height;
 
-    _this.makePreview();
+    this.makePreview();
 
-    _this.$cropControls = $(
+    this.$cropControls = $(
       '<div class="imager-crop-container">' +
-      '<div class="crop-corner crop-top-left"></div>' +
-      '<div class="crop-corner crop-top-right"></div>' +
-      '<div class="crop-corner crop-bottom-right"></div>' +
-      '<div class="crop-corner crop-bottom-left"></div>' +
-
-      '<div class="crop-border crop-border-top"></div>' +
-      '<div class="crop-border crop-border-right"></div>' +
-      '<div class="crop-border crop-border-bottom"></div>' +
-      '<div class="crop-border crop-border-left"></div>' +
-      '</div>').css({
-      width: _this.croppedWidth ? _this.croppedWidth : _this.originalWidth,
-      height: _this.croppedHeight ? _this.croppedHeight : _this.originalHeight,
-      left: _this.croppedLeft ? _this.croppedLeft : 0,
-      top: _this.croppedTop ? _this.croppedTop : 0
+        '<div class="crop-corner crop-top-left"></div>' +
+        '<div class="crop-corner crop-top-right"></div>' +
+        '<div class="crop-corner crop-bottom-right"></div>' +
+        '<div class="crop-corner crop-bottom-left"></div>' +
+        '<div class="crop-border crop-border-top"></div>' +
+        '<div class="crop-border crop-border-right"></div>' +
+        '<div class="crop-border crop-border-bottom"></div>' +
+        '<div class="crop-border crop-border-left"></div>' +
+        "</div>"
+    ).css({
+      width: this.croppedWidth ? this.croppedWidth : this.originalWidth,
+      height: this.croppedHeight ? this.croppedHeight : this.originalHeight,
+      left: this.croppedLeft ? this.croppedLeft : 0,
+      top: this.croppedTop ? this.croppedTop : 0,
     });
 
-    _this.imager.$editContainer.append(_this.$cropControls);
-    var $selection = _this.$cropControls;
-    var $corners = $selection.find('.crop-corner');
+    this.imager.$editContainer.append(this.$cropControls);
+    var $selection = this.$cropControls;
+    var $corners = $selection.find(".crop-corner");
 
-    if (_this.imager.touchDevice) {
-      $corners.css(_this.options.controlsTouchCss);
+    if (this.imager.touchDevice) {
+      $corners.css(this.options.controlsTouchCss);
     } else {
-      $corners.css(_this.options.controlsCss);
+      $corners.css(this.options.controlsCss);
     }
 
-    function handleCropSelectionChanges(){
-      _this.$cropControls.css({
-        left: _this.croppedLeft,
-        top: _this.croppedTop,
-        width: _this.croppedWidth,
-        height: _this.croppedHeight
+    const handleCropSelectionChanges = () => {
+      this.$cropControls.css({
+        left: this.croppedLeft,
+        top: this.croppedTop,
+        width: this.croppedWidth,
+        height: this.croppedHeight,
       });
 
-      _this.adjustPreview();
+      this.adjustPreview();
     }
 
-    $corners.on(MOUSE_DOWN, function (clickEvent) {
+    $corners.on(MOUSE_DOWN, (clickEvent) => {
       clickEvent.stopPropagation();
-      var controlItem = this;
+      var controlItem = clickEvent.target;
 
       var startPos = util.getEventPosition(clickEvent);
 
-      var startControlsLeft = _this.$cropControls.css('left').replace('px', '') | 0;
-      var startControlsTop = _this.$cropControls.css('top').replace('px', '') | 0;
+      var startControlsLeft =
+        this.$cropControls.css("left").replace("px", "") | 0;
+      var startControlsTop =
+        this.$cropControls.css("top").replace("px", "") | 0;
 
-      var startControlsWidth = _this.$cropControls.css('width').replace('px', '') | 0;
-      var startControlsHeight = _this.$cropControls.css('height').replace('px', '') | 0;
+      var startControlsWidth =
+        this.$cropControls.css("width").replace("px", "") | 0;
+      var startControlsHeight =
+        this.$cropControls.css("height").replace("px", "") | 0;
 
-      $body.on(MOUSE_MOVE, function (moveEvent) {
+      $body.on(MOUSE_MOVE, (moveEvent) => {
         var movePos = util.getEventPosition(moveEvent);
 
         var diffLeft = movePos.left - startPos.left;
         var diffTop = movePos.top - startPos.top;
 
         // bounds validation
-        function validateBounds(){
-          if (_this.croppedLeft < 0) {
-            _this.croppedLeft = 0;
+        const validateBounds = () => {
+          if (this.croppedLeft < 0) {
+            this.croppedLeft = 0;
           }
 
-          if (_this.croppedTop < 0) {
-            _this.croppedTop = 0;
+          if (this.croppedTop < 0) {
+            this.croppedTop = 0;
           }
 
-          if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
-            _this.croppedWidth = _this.originalWidth - _this.croppedLeft;
+          if (this.croppedLeft + this.croppedWidth > this.originalWidth) {
+            this.croppedWidth = this.originalWidth - this.croppedLeft;
           }
 
-          if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
-            _this.croppedHeight = _this.originalHeight - _this.croppedTop;
+          if (this.croppedTop + this.croppedHeight > this.originalHeight) {
+            this.croppedHeight = this.originalHeight - this.croppedTop;
           }
         }
 
         if ($(controlItem).hasClass("crop-top-left")) {
-          _this.croppedLeft = startControlsLeft + diffLeft;
-          _this.croppedTop = startControlsTop + diffTop;
+          this.croppedLeft = startControlsLeft + diffLeft;
+          this.croppedTop = startControlsTop + diffTop;
 
-          _this.croppedWidth = startControlsWidth - diffLeft;
-          _this.croppedHeight = startControlsHeight - diffTop;
+          this.croppedWidth = startControlsWidth - diffLeft;
+          this.croppedHeight = startControlsHeight - diffTop;
 
           if (moveEvent.shiftKey) {
             validateBounds();
-            if (_this.croppedHeight < _this.croppedWidth){
-              _this.croppedWidth = _this.croppedHeight;
-              _this.croppedLeft = (startControlsWidth - _this.croppedHeight) + startControlsLeft;
+            if (this.croppedHeight < this.croppedWidth) {
+              this.croppedWidth = this.croppedHeight;
+              this.croppedLeft =
+                startControlsWidth - this.croppedHeight + startControlsLeft;
             } else {
-              _this.croppedHeight = _this.croppedWidth;
-              _this.croppedTop = (startControlsHeight - _this.croppedWidth) + startControlsTop;
+              this.croppedHeight = this.croppedWidth;
+              this.croppedTop =
+                startControlsHeight - this.croppedWidth + startControlsTop;
             }
           }
         }
 
         if ($(controlItem).hasClass("crop-top-right")) {
-          _this.croppedLeft = startControlsLeft;
-          _this.croppedTop = startControlsTop + diffTop;
+          this.croppedLeft = startControlsLeft;
+          this.croppedTop = startControlsTop + diffTop;
 
-          _this.croppedWidth = startControlsWidth - diffLeft * -1;
-          _this.croppedHeight = startControlsHeight - diffTop;
+          this.croppedWidth = startControlsWidth - diffLeft * -1;
+          this.croppedHeight = startControlsHeight - diffTop;
 
           if (moveEvent.shiftKey) {
             validateBounds();
-            if (_this.croppedHeight < _this.croppedWidth){
-              _this.croppedWidth = _this.croppedHeight;
+            if (this.croppedHeight < this.croppedWidth) {
+              this.croppedWidth = this.croppedHeight;
             } else {
-              _this.croppedHeight = _this.croppedWidth;
-              _this.croppedTop = (startControlsHeight - _this.croppedHeight) + startControlsTop;
+              this.croppedHeight = this.croppedWidth;
+              this.croppedTop =
+                startControlsHeight - this.croppedHeight + startControlsTop;
             }
           }
         }
 
         if ($(controlItem).hasClass("crop-bottom-right")) {
-          _this.croppedLeft = startControlsLeft;
-          _this.croppedTop = startControlsTop;
+          this.croppedLeft = startControlsLeft;
+          this.croppedTop = startControlsTop;
 
-          _this.croppedWidth = startControlsWidth - diffLeft * -1;
-          _this.croppedHeight = startControlsHeight + diffTop;
+          this.croppedWidth = startControlsWidth - diffLeft * -1;
+          this.croppedHeight = startControlsHeight + diffTop;
 
           if (moveEvent.shiftKey) {
             validateBounds();
-            if (_this.croppedHeight < _this.croppedWidth){
-              _this.croppedWidth = _this.croppedHeight;
+            if (this.croppedHeight < this.croppedWidth) {
+              this.croppedWidth = this.croppedHeight;
             } else {
-              _this.croppedHeight = _this.croppedWidth;
+              this.croppedHeight = this.croppedWidth;
             }
           }
         }
 
         if ($(controlItem).hasClass("crop-bottom-left")) {
-          _this.croppedLeft = startControlsLeft + diffLeft;
-          _this.croppedTop = startControlsTop;
+          this.croppedLeft = startControlsLeft + diffLeft;
+          this.croppedTop = startControlsTop;
 
-          _this.croppedWidth = startControlsWidth - diffLeft;
-          _this.croppedHeight = startControlsHeight + diffTop;
+          this.croppedWidth = startControlsWidth - diffLeft;
+          this.croppedHeight = startControlsHeight + diffTop;
 
-          if (moveEvent.shiftKey){
+          if (moveEvent.shiftKey) {
             validateBounds();
-            if (_this.croppedHeight < _this.croppedWidth){
-              _this.croppedWidth = _this.croppedHeight;
-              _this.croppedLeft = startControlsLeft + (startControlsWidth - _this.croppedWidth);
+            if (this.croppedHeight < this.croppedWidth) {
+              this.croppedWidth = this.croppedHeight;
+              this.croppedLeft =
+                startControlsLeft + (startControlsWidth - this.croppedWidth);
             } else {
-              _this.croppedHeight = _this.croppedWidth;
+              this.croppedHeight = this.croppedWidth;
             }
           }
         }
@@ -268,43 +276,41 @@
         return false;
       });
 
-      $body.on(MOUSE_UP, function () {
+      $body.on(MOUSE_UP, () =>  {
         $body.off(MOUSE_MOVE);
         $body.off(MOUSE_UP);
       });
     });
 
-    $selection.on(MOUSE_DOWN, function(clickEvent) {
-      var controlItem = this;
-
+    $selection.on(MOUSE_DOWN,  (clickEvent) => {
       var startPos = util.getEventPosition(clickEvent);
 
       var startControlsLeft =
-        _this.$cropControls.css("left").replace("px", "") | 0;
+        this.$cropControls.css("left").replace("px", "") | 0;
       var startControlsTop =
-        _this.$cropControls.css("top").replace("px", "") | 0;
+        this.$cropControls.css("top").replace("px", "") | 0;
 
-      $body.on(MOUSE_MOVE, function(moveEvent) {
+      $body.on(MOUSE_MOVE, (moveEvent) => {
         var movePos = util.getEventPosition(moveEvent);
 
         var diffLeft = movePos.left - startPos.left;
         var diffTop = movePos.top - startPos.top;
 
-        _this.croppedLeft = startControlsLeft + diffLeft;
-        _this.croppedTop = startControlsTop + diffTop;
+        this.croppedLeft = startControlsLeft + diffLeft;
+        this.croppedTop = startControlsTop + diffTop;
 
         // bounds validation
-        if (_this.croppedLeft < 0) {
-          _this.croppedLeft = 0;
+        if (this.croppedLeft < 0) {
+          this.croppedLeft = 0;
         }
-        if (_this.croppedTop < 0) {
-          _this.croppedTop = 0;
+        if (this.croppedTop < 0) {
+          this.croppedTop = 0;
         }
-        if (_this.croppedLeft + _this.croppedWidth > _this.originalWidth) {
-          _this.croppedLeft = _this.originalWidth - _this.croppedWidth;
+        if (this.croppedLeft + this.croppedWidth > this.originalWidth) {
+          this.croppedLeft = this.originalWidth - this.croppedWidth;
         }
-        if (_this.croppedTop + _this.croppedHeight > _this.originalHeight) {
-          _this.croppedTop = _this.originalHeight - _this.croppedHeight;
+        if (this.croppedTop + this.croppedHeight > this.originalHeight) {
+          this.croppedTop = this.originalHeight - this.croppedHeight;
         }
 
         handleCropSelectionChanges();
@@ -314,16 +320,14 @@
         return false;
       });
 
-      $body.on(MOUSE_UP, function() {
+      $body.on(MOUSE_UP, () =>  {
         $body.off(MOUSE_MOVE);
         $body.off(MOUSE_UP);
       });
     });
-  };
+  }
 
-  Crop.prototype.stopCropping = function () {
-    var _this = this;
-
+  stopCropping() {
     this.$preview.remove();
     this.$preview = null;
 
@@ -331,52 +335,53 @@
     this.$cropControls = null;
 
     this.renderCropped = true;
-  };
+  }
 
-  Crop.prototype.makePreview = function () {
-    var _this = this;
-
+  makePreview() {
     var originalPreviewSize = this.imager.getPreviewSize();
 
-    _this.$preview = $('' +
-      '<div class="imager-crop-preview-container">' +
-      '<canvas class="imager-crop-preview"></canvas>' +
-      '</div>').css('position', 'absolute').css('top', '50px').css({
-      width: originalPreviewSize.width,
-      height: originalPreviewSize.height,
-      position: 'absolute',
-      right: '50px',
-      top: '50px'
+    this.$preview = $(
+      "" +
+        '<div class="imager-crop-preview-container">' +
+        '<canvas class="imager-crop-preview"></canvas>' +
+        "</div>"
+    )
+      .css("position", "absolute")
+      .css("top", "50px")
+      .css({
+        width: originalPreviewSize.width,
+        height: originalPreviewSize.height,
+        position: "absolute",
+        right: "50px",
+        top: "50px",
+      });
+
+    this.previewCanvas = this.$preview.find("canvas.imager-crop-preview")[0];
+    this.previewCanvas.__previewCanvas = true;
+
+    this.previewCanvas.width = originalPreviewSize.width * 1.5;
+    this.previewCanvas.height = originalPreviewSize.height * 1.5;
+
+    $(this.previewCanvas).css({
+      height: "400px",
     });
 
-    _this.previewCanvas = _this.$preview.find('canvas.imager-crop-preview')[0];
-    _this.previewCanvas.__previewCanvas = true;
+    this.imager.$editContainer.after(this.$preview);
+  }
 
-    _this.previewCanvas.width = originalPreviewSize.width * 1.5;
-    _this.previewCanvas.height = originalPreviewSize.height * 1.5;
-
-    $(_this.previewCanvas).css({
-      height: '400px'
-    });
-
-    _this.imager.$editContainer.after(this.$preview);
-  };
-
-  Crop.prototype.adjustPreview = function () {
-    var _this = this;
-
-    //_this.$preview.find('canvas').css({
-    //  width: _this.croppedWidth,
-    //  height: _this.croppedHeight//,
-    //  //left: _this.croppedLeft,
-    //  //top: _this.croppedTop
+  adjustPreview() {
+    //this.$preview.find('canvas').css({
+    //  width: this.croppedWidth,
+    //  height: this.croppedHeight//,
+    //  //left: this.croppedLeft,
+    //  //top: this.croppedTop
     //});
     //
-    //_this.previewCanvas.width = _this.croppedWidth * 1.5;
-    //_this.previewCanvas.height = _this.croppedHeight * 1.5;
-  };
+    //this.previewCanvas.width = this.croppedWidth * 1.5;
+    //this.previewCanvas.height = this.croppedHeight * 1.5;
+  }
 
-  Crop.prototype.render = function (ctx) {
+  render(ctx) {
     if (this.croppedWidth === null || !this.enableRendering) {
       return;
     }
@@ -391,21 +396,29 @@
       previewHeight = this.sizeBeforeCrop.height;
     }
 
-    var tempCtx = this.imager.tempCanvas.getContext('2d');
+    var tempCtx = this.imager.tempCanvas.getContext("2d");
 
     // firstly find selection size in global coordinate syztem and scale
     var scaledWidth = this.imager.convertScale(
-      this.croppedWidth, previewWidth, ctx.canvas.width
+      this.croppedWidth,
+      previewWidth,
+      ctx.canvas.width
     );
     var scaledHeight = this.imager.convertScale(
-      this.croppedHeight, previewHeight, ctx.canvas.height
+      this.croppedHeight,
+      previewHeight,
+      ctx.canvas.height
     );
 
     var left = this.imager.convertScale(
-      this.croppedLeft, previewWidth, ctx.canvas.width
+      this.croppedLeft,
+      previewWidth,
+      ctx.canvas.width
     );
     var top = this.imager.convertScale(
-      this.croppedTop, previewHeight, ctx.canvas.height
+      this.croppedTop,
+      previewHeight,
+      ctx.canvas.height
     );
 
     left *= -1;
@@ -420,21 +433,37 @@
 
     tempCtx.clearRect(0, 0, tempCtx.canvas.width, tempCtx.canvas.height);
 
-    tempCtx.drawImage(ctx.canvas,
-      0, 0, ctx.canvas.width, ctx.canvas.height,
-      left, top, tempCtx.canvas.width + widthDiff, tempCtx.canvas.height + heightDiff);
+    tempCtx.drawImage(
+      ctx.canvas,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height,
+      left,
+      top,
+      tempCtx.canvas.width + widthDiff,
+      tempCtx.canvas.height + heightDiff
+    );
 
     ctx.canvas.width = scaledWidth;
     ctx.canvas.height = scaledHeight;
 
     this.imager.clearCanvas(ctx);
-    ctx.drawImage(tempCtx.canvas,
-      0, 0, tempCtx.canvas.width, tempCtx.canvas.height,
-      0, 0, ctx.canvas.width, ctx.canvas.height);
-  };
+    ctx.drawImage(
+      tempCtx.canvas,
+      0,
+      0,
+      tempCtx.canvas.width,
+      tempCtx.canvas.height,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height
+    );
+  }
 
-  Crop.prototype.onToolSelected = function (btn) {
-    if (btn.plugin.constructor.name == 'RotatePlugin') {
+  onToolSelected(btn) {
+    if (btn.plugin.constructor.name == "RotatePlugin") {
       this.croppedLeft = null;
       this.croppedTop = null;
       this.croppedWidth = null;
@@ -442,9 +471,9 @@
 
       this.sizeBeforeCrop = null;
     }
-  };
+  }
 
-  Crop.prototype.deserialize = function (savedState) {
+  deserialize(savedState) {
     if (savedState) {
       this.croppedLeft = croppedLeft;
       this.croppedTop = croppedTop;
@@ -452,27 +481,24 @@
       this.croppedHeight = croppedHeight;
       this.sizeBeforeCrop = sizeBeforeCrop;
     }
-  };
+  }
 
-  Crop.prototype.serialize = function () {
+  serialize() {
     return {
       croppedLeft: this.croppedLeft,
       croppedTop: this.croppedTop,
       croppedWidth: this.croppedWidth,
       croppedHeight: this.croppedHeight,
-      sizeBeforeCrop: this.sizeBeforeCrop
+      sizeBeforeCrop: this.sizeBeforeCrop,
     };
-  };
+  }
 
-  Crop.prototype.reset = function () {
+  reset() {
     this.croppedLeft = null;
     this.croppedTop = null;
     this.croppedWidth = null;
     this.croppedHeight = null;
 
     this.sizeBeforeCrop = null;
-  };
-
-  pluginsCatalog.Crop = Crop;
-
-})(jQuery, ImagerJs.plugins, ImagerJs.util, ImagerJs.translations);
+  }
+}

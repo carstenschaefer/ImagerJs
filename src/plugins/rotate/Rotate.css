@@ -22,7 +22,7 @@
     border-radius: 25px;
     border: 1px solid rgb(60, 58, 58);
     background: rgb(255, 255, 255);
-    cursor: url(assets/cursor-fa-rotate-right.cur), crosshair;
+    cursor: url(../../assets/cursor-fa-rotate-right.cur), crosshair;
     z-index: 1301;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .rotate-border {
-    background: url(assets/border.gif);
+    background: url(../../assets/border.gif);
     position:absolute;
 }
 

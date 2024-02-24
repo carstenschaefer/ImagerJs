@@ -11,3 +11,4 @@ npm-debug.log
 ImagerJs.v12.suo
 obj/Debug/ImagerJs.njsprojResolveAssemblyReference.cache
 package-lock.json
+dist/

@@ -1,124 +1,108 @@
-(function ($, namespace, translations) {
-  /**
-   *
-   * @param accept
-   *
-   * @constructor
-   * @memberof ImagerJs.util
-   */
-  var FileSelector = function (accept) {
-    var _this = this;
+import { translate } from "../Translations";
+import "./FileSelector.css";
 
-    _this.acceptTypes = accept;
+export default class FileSelector {
+  constructor(accept) {
+    this.acceptTypes = accept;
 
-    _this.$element = $('<div class="file-selector">' +
-    '<input type="file" />' +
-    '<div class="drop-area">' +
-        translations.t('Or drop files here') +
-    '</div>' +
-    '<div class="error-container bg-danger"></div>' +
-    '</div>');
+    this.$element = $(
+      '<div class="file-selector">' +
+        '<input type="file" />' +
+        '<div class="drop-area">' +
+        translate("Or drop files here") +
+        "</div>" +
+        '<div class="error-container bg-danger"></div>' +
+        "</div>"
+    );
 
-    if (_this.acceptTypes) {
-      _this.$element.find('input').attr('accept', _this.acceptTypes);
+    if (this.acceptTypes) {
+      this.$element.find("input").attr("accept", this.acceptTypes);
     }
 
-    _this.$element.find('input').on('change', function (e) {
+    this.$element.find("input").on("change", (e) => {
       if (e.target.files.length < 1) {
-        _this.showError(translations.t('No file selected.'));
+        this.showError(translate("No file selected."));
       }
 
       for (var i = 0; i < e.target.files.length; i++) {
-        if(e.target.files[i].type.indexOf('image') < 0) {
-          _this.showError(translations.t('Incorrect file type'));
+        if (e.target.files[i].type.indexOf("image") < 0) {
+          this.showError(translate("Incorrect file type"));
           return;
         }
       }
 
-      _this.parseFile(e.target.files[0]);
+      this.parseFile(e.target.files[0]);
     });
 
-    var $dropArea = _this.$element.find('.drop-area');
-    $dropArea.on('dragover', function (e) {
+    var $dropArea = this.$element.find(".drop-area");
+    $dropArea.on("dragover", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      $dropArea.addClass('hover');
+      $dropArea.addClass("hover");
     });
-    $dropArea.on('dragleave', function (e) {
+    $dropArea.on("dragleave", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      $dropArea.removeClass('hover');
+      $dropArea.removeClass("hover");
     });
-    $dropArea.on('drop', function (e) {
+    $dropArea.on("drop", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      $dropArea.removeClass('hover');
+      $dropArea.removeClass("hover");
       // fetch FileList object
       var files = e.originalEvent.dataTransfer.files;
 
       if (files.length < 1) {
-        _this.showError(translations.t('No file selected.'));
+        this.showError(translate("No file selected."));
         return;
       }
 
       for (var i = 0; i < files.length; i++) {
-        if(files[i].type.indexOf('image') < 0) {
-          _this.showError(translations.t('Incorrect file type.'));
+        if (files[i].type.indexOf("image") < 0) {
+          this.showError(translate("Incorrect file type."));
           return;
         }
       }
 
-      _this.parseFile(files[0]);
+      this.parseFile(files[0]);
     });
-  };
+  }
 
-  FileSelector.prototype.parseFile = function (file) {
-    var _this = this;
-
+  parseFile(file) {
     var fileReader = new FileReader();
 
-    fileReader.onload = function (onloadEvent) {
-      _this.$element.trigger(
-        'fileSelected.fileSelector', {
-          info: file,
-          data: fileReader.result
-        }
-      );
+    fileReader.onload = (onloadEvent) => {
+      this.$element.trigger("fileSelected.fileSelector", {
+        info: file,
+        data: fileReader.result,
+      });
     };
 
     fileReader.readAsDataURL(file);
-  };
+  }
 
-  FileSelector.prototype.onFileSelected = function (handler) {
-    var _this = this;
-    _this.$element.on('fileSelected.fileSelector', function (event, file) {
-      handler(file);
-    });
-  };
+  onFileSelected(handler) {
+    this.$element.on("fileSelected.fileSelector", (event, file) =>
+      handler(file)
+    );
+  }
 
-  FileSelector.prototype.showError = function (error) {
-    var _this = this;
+  showError(error) {
+    this.$element.find(".error-container").html(error);
+    this.$element.find(".error-container").slideDown(200);
 
-    _this.$element.find('.error-container').html(error);
-    _this.$element.find('.error-container').slideDown(200);
+    setTimeout(() => this.$element.find(".error-container").slideUp(200), 2000);
+  }
 
-    setTimeout(function () {
-      _this.$element.find('.error-container').slideUp(200);
-    }, 2000);
-  };
-
-  FileSelector.prototype.getElement = function () {
+  getElement() {
     return this.$element;
-  };
+  }
 
-  FileSelector.prototype.hide = function () {
+  hide() {
     this.$element.hide();
-  };
+  }
 
-  FileSelector.prototype.show = function () {
+  show() {
     this.$element.show();
-  };
-
-  namespace.FileSelector = FileSelector;
-
-})(jQuery, ImagerJs.util, ImagerJs.translations);
+  }
+}

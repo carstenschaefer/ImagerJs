@@ -1,61 +1,60 @@
-(function ($, pluginsCatalog, util, translations) {
+import "./Save.css";
+import { translate } from "../../Translations";
 
-  /**
-   * Allows saving of the image.
-   *
-   * @param imagerInstance
-   *
-   * @constructor
-   * @memberof ImagerJs.plugins
-   */
-  var Save = function SavePlugin(imagerInstance, options) {
-    var _this = this;
+/**
+ * Allows saving of the image.
+ *
+ * @param imagerInstance
+ *
+ * @constructor
+ * @memberof ImagerJs.plugins
+ */
+export default class SavePlugin {
+  constructor(imagerInstance, options) {
+    this.imager = imagerInstance;
 
-    _this.imager = imagerInstance;
-
-    _this.defaultOptions = {
+    this.defaultOptions = {
       upload: false,
-      uploadFunction: null
+      uploadFunction: null,
     };
 
     options = options ? options : {};
-    _this.options = $.extend(true, _this.defaultOptions, options);
-  };
+    this.options = $.extend(true, this.defaultOptions, options);
+  }
 
-  Save.prototype.getButtons = function () {
-    var _this = this;
+  getButtons() {
+    return [
+      {
+        classes: "btn-save",
+        iconClasses: "fa-save",
+        tooltip: translate("Save"),
+        enabledHandler: (toolbar) => {
+          var contentConfig = this.imager.options.contentConfig;
+          var saveFunc = contentConfig ? contentConfig.saveImageData : null;
 
-    return [{
-      classes: 'btn-save',
-      iconClasses: 'fa-save',
-      tooltip: translations.t('Save'),
-      enabledHandler: function (toolbar) {
-        var contentConfig = _this.imager.options.contentConfig;
-        var saveFunc = contentConfig ? contentConfig.saveImageData : null;
+          if (this.options.upload) {
+            saveFunc = this.options.uploadFunction;
+          }
 
-        if (_this.options.upload) {
-          saveFunc = _this.options.uploadFunction;
-        }
-
-        if (!saveFunc) {
-          console.error('No uploadFunction function provided in ' +
-            'imager.options.contentConfig.saveImageData.');
-        } else {
-          saveFunc.call(
-            _this.imager,
-            _this.imager.$imageElement.attr('data-imager-id'),
-            _this.imager.$imageElement.attr('src'),
-            function (savedImageUrl) {
-              _this.imager.stopEditing();
-              // for uploaded images - change src to url returned from the server
-              _this.imager.$imageElement.attr('src', savedImageUrl);
-            }
-          );
-        }
-      }
-    }];
-  };
-
-  pluginsCatalog.Save = Save;
-
-})(jQuery, ImagerJs.plugins, ImagerJs.util, ImagerJs.translations);
+          if (!saveFunc) {
+            console.error(
+              "No uploadFunction function provided in " +
+                "imager.options.contentConfig.saveImageData."
+            );
+          } else {
+            saveFunc.call(
+              this.imager,
+              this.imager.$imageElement.attr("data-imager-id"),
+              this.imager.$imageElement.attr("src"),
+              (savedImageUrl) => {
+                this.imager.stopEditing();
+                // for uploaded images - change src to url returned from the server
+                this.imager.$imageElement.attr("src", savedImageUrl);
+              }
+            );
+          }
+        },
+      },
+    ];
+  }
+}

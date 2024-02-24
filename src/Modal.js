@@ -1,170 +1,172 @@
-(function ($, namespace) {
-  var $body = null;
-  var $overlay = $('<div class="modaljs-overlay hidden hidden-add-end noselect"></div>');
-  var $wrapper = $('<div class="modaljs-wrapper hidden noselect">' +
+import './Modal.css';
+
+let $body = null;
+let $overlay = $(
+  '<div class="modaljs-overlay hidden hidden-add-end noselect"></div>'
+);
+let $wrapper = $(
+  '<div class="modaljs-wrapper hidden noselect">' +
     '<div class="modaljs-wrapper2 modaljs-modals-container noselect"></div>' +
-    '</div>');
+    "</div>"
+);
 
-  $(document).ready(function () {
-    $body = $('body');
-    $body.append($overlay);
-    $body.append($wrapper);
-  });
+$(document).ready(() => {
+  $body = $("body");
+  $body.append($overlay);
+  $body.append($wrapper);
+});
 
-  var Modal = function Modal() {
-    var _this = this;
-    var $modal = $('<div class="modaljs hidden noselect">' +
-      '<header></header>' +
-      '<div class="modaljs-template-container noselect"></div>' +
-      '<footer>' +
-      '</footer>');
+export class Modal {
+  constructor() {
+    var $modal = $(
+      '<div class="modaljs hidden noselect">' +
+        "<header></header>" +
+        '<div class="modaljs-template-container noselect"></div>' +
+        "<footer>" +
+        "</footer>"
+    );
 
-    $wrapper.find('.modaljs-modals-container').append($modal);
+    $wrapper.find(".modaljs-modals-container").append($modal);
 
-    $wrapper.find('.modaljs').scroll(function () {
-      $(window).trigger('resize');
+    $wrapper.find(".modaljs").scroll(() => {
+      $(window).trigger("resize");
     });
 
     this.$modal = $modal;
-    this.classname = '';
+    this.classname = "";
 
     this.cancelHandler = null;
 
-    $(window).resize(function () {
-      _this.fixPosition();
+    $(window).resize(() => {
+      this.fixPosition();
     });
 
-    $('body').on('imagerResize', function () {
-      _this.fixPosition();
+    $("body").on("imagerResize", () => {
+      this.fixPosition();
     });
-  };
+  }
 
-  Modal.prototype.setTitle = function (title) {
-    this.$modal.find('header').html(title);
-  };
+  setTitle(title) {
+    this.$modal.find("header").html(title);
+  }
 
-  Modal.prototype.setTemplate = function (template) {
-    this.$modal.find('.modaljs-template-container').append($(template));
-  };
+  setTemplate(template) {
+    this.$modal.find(".modaljs-template-container").append($(template));
+  }
 
-  Modal.prototype.fixPosition = function () {
-    if ($wrapper.find('.modaljs').length < 1) {
+  fixPosition() {
+    if ($wrapper.find(".modaljs").length < 1) {
       return;
     }
 
-    var headerHeight = $wrapper.find('.modaljs > header')
-      [0].getBoundingClientRect().height;
-    var bodyHeight = $wrapper.find('.modaljs > .modaljs-template-container')
-      [0].getBoundingClientRect().height;
-    var footerHeight = $wrapper.find('.modaljs > footer')
-      [0].getBoundingClientRect().height;
+    var headerHeight = $wrapper
+      .find(".modaljs > header")[0]
+      .getBoundingClientRect().height;
+    var bodyHeight = $wrapper
+      .find(".modaljs > .modaljs-template-container")[0]
+      .getBoundingClientRect().height;
+    var footerHeight = $wrapper
+      .find(".modaljs > footer")[0]
+      .getBoundingClientRect().height;
 
     var fullContentHeight = headerHeight + bodyHeight + footerHeight;
 
     if ($(window).height() <= fullContentHeight) {
-      $wrapper.addClass('fullheight');
+      $wrapper.addClass("fullheight");
     } else {
-      $wrapper.removeClass('fullheight');
+      $wrapper.removeClass("fullheight");
     }
-  };
+  }
 
-  Modal.prototype.addCancelButton = function (buttonText, handler) {
-    var _this = this;
+  addCancelButton(buttonText, handler) {
+    this.cancelHandler = handler;
 
-    _this.cancelHandler = handler;
-
-    var $button = $('<button></button>').text(buttonText);
-    $button.on('click', function () {
-      _this.hide();
-      if (_this.cancelHandler) {
-        _this.cancelHandler();
+    var $button = $("<button></button>").text(buttonText);
+    $button.on("click", () => {
+      this.hide();
+      if (this.cancelHandler) {
+        this.cancelHandler();
       }
     });
 
-    _this.$modal.find('footer').append($button);
+    this.$modal.find("footer").append($button);
 
-    _this._fixButtonsSize();
-  };
+    this._fixButtonsSize();
+  }
 
-  Modal.prototype.addClass = function (classname) {
-    this.classname += ' ' + classname;
+  addClass(classname) {
+    this.classname += " " + classname;
     this.$modal.addClass(classname);
-  };
+  }
 
-  Modal.prototype.addActionButton = function (buttonText, handler) {
-    var _this = this;
-
-    var $button = $('<button></button>')
-      .addClass('modaljs-action-button')
+  addActionButton(buttonText, handler) {
+    var $button = $("<button></button>")
+      .addClass("modaljs-action-button")
       .text(buttonText);
 
-    $button.on('click', function () {
+    $button.on("click", () => {
       var handlerResponse = handler();
       if (handlerResponse === undefined && handlerResponse !== false) {
-        _this.hide();
+        this.hide();
       }
     });
 
-    _this.$modal.find('footer').append($button);
+    this.$modal.find("footer").append($button);
 
-    _this._fixButtonsSize();
-  };
+    this._fixButtonsSize();
+  }
 
-  Modal.prototype._fixButtonsSize = function () {
-    var $buttons = this.$modal.find('footer button');
-    $buttons.css('width', (100 / $buttons.length) + '%');
-  };
+  _fixButtonsSize() {
+    var $buttons = this.$modal.find("footer button");
+    $buttons.css("width", 100 / $buttons.length + "%");
+  }
 
-  Modal.prototype.show = function () {
-    var _this = this;
-
+  show() {
     $overlay.addClass(this.classname);
 
-    $overlay.removeClass('hidden-add-end');
-    $overlay.removeClass('hidden');
-    $overlay.css('height', $('body').height());
-    $overlay.on('click', function () {
-      _this.hide();
-      if (_this.cancelHandler) {
-        _this.cancelHandler();
+    $overlay.removeClass("hidden-add-end");
+    $overlay.removeClass("hidden");
+    $overlay.css("height", $("body").height());
+    $overlay.on("click", () => {
+      this.hide();
+      if (this.cancelHandler) {
+        this.cancelHandler();
       }
     });
 
-    $wrapper.removeClass('hidden');
+    $wrapper.removeClass("hidden");
 
-    this.$modal.removeClass('hidden');
+    this.$modal.removeClass("hidden");
 
     var bodyWidthBefore = $body.width();
-    this.overflowBefore = $body.css('overflow');
+    this.overflowBefore = $body.css("overflow");
 
-    $body.css('overflow', 'hidden');
+    $body.css("overflow", "hidden");
     this.widthDiff = $body.width() - bodyWidthBefore;
-    this.paddingBefore = $body.css('padding-right');
+    this.paddingBefore = $body.css("padding-right");
 
-    $body.css('padding-right', this.widthDiff + 'px');
-  };
+    $body.css("padding-right", this.widthDiff + "px");
+  }
 
-  Modal.prototype.hide = function () {
+  hide() {
     $overlay.removeClass(this.classname);
 
-    $overlay.addClass('hidden');
-    setTimeout(function () {
-      $overlay.addClass('hidden-add-end');
+    $overlay.addClass("hidden");
+    setTimeout(() => {
+      $overlay.addClass("hidden-add-end");
     }, 400);
 
-    $overlay.off('click');
+    $overlay.off("click");
 
-    $wrapper.addClass('hidden');
-    this.$modal.addClass('hidden');
+    $wrapper.addClass("hidden");
+    this.$modal.addClass("hidden");
 
-    $body.css('overflow', this.overflowBefore);
-    $body.css('padding-right', this.paddingBefore);
-  };
+    $body.css("overflow", this.overflowBefore);
+    $body.css("padding-right", this.paddingBefore);
+  }
 
-  Modal.prototype.remove = function () {
+  remove() {
     this.$modal.remove();
     this.cancelHandler = false;
-  };
-
-  namespace.Modal = Modal;
-})(jQuery, window);
+  }
+}

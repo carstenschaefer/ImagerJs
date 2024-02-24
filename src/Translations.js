@@ -1,60 +1,66 @@
-(function ($, namespace) {
-  namespace.set = function(strings){
-    strings = strings ? strings : {};
-    namespace.translations = $.extend(true, namespace.translations, strings);
-  };
+// (function ($, namespace) {
+//   set = function(strings){
+//     strings = strings ? strings : {};
+//     translations = $.extend(true, translations, strings);
+//   };
 
-  namespace.translations = {
-    'Incorrect file type': 'Incorrect file type',
-    'Insert': 'Insert',
-    'Cancel': 'Cancel',
-    'Add image': 'Add image',
-    'Quality': 'Quality',
+//   ;
 
-    'Rotate': 'Rotate',
-    'Crop': 'Crop',
+//   ;
+// })(jQuery, ImagerJs.translations);
 
-    'Original': 'Original',
-    'KB': 'KB',
-    'Large': 'Large',
-    'Medium': 'Medium',
-    'Small': 'Small',
-    'Custom quality percent': 'Custom quality percent',
-    'Custom': 'Custom',
+const translations = {
+  "Incorrect file type": "Incorrect file type",
+  Insert: "Insert",
+  Cancel: "Cancel",
+  "Add image": "Add image",
+  Quality: "Quality",
 
-    'Image properties': 'Image properties',
-    'Size:': 'Size:',
-    'width in px': 'width in px',
-    'height in px': 'height in px',
-    'Left': 'Left',
-    'Right': 'Right',
-    'Center': 'Center',
-    'Inline': 'Inline',
-    'Floating': 'Floating',
-    'Transparent background': 'Transparent background',
-    'Apply': 'Apply',
-    'Reject': 'Reject',
-    'Delete image': 'Delete image',
-    'Move image': 'Move image',
-    'Are you sure want to delete this image?': 'Are you sure want to delete this image?',
-    'Or drop files here': 'Or drop files here',
-    'No file selected.': 'No file selected.',
-    'Please wait...': 'Please wait...',
-    'Save': 'Save',
-    'Undo': 'Undo',
-    'Rotate manually': 'Rotate manually',
-    'Rotate 90 left': 'Rotate 90° left',
-    'Rotate 90 right': 'Rotate 90° left',
+  Rotate: "Rotate",
+  Crop: "Crop",
 
-    'Image is too big and could cause very poor performance.': 'Image is too big and could cause very poor performance.'
-  };
+  Original: "Original",
+  KB: "KB",
+  Large: "Large",
+  Medium: "Medium",
+  Small: "Small",
+  "Custom quality percent": "Custom quality percent",
+  Custom: "Custom",
 
-  namespace.t = function (textString) {
-    if (namespace.translations[textString]) {
-      return namespace.translations[textString];
-    } else {
-      console.warn('String not found in texts:' + textString);
-      return textString;
-    }
-  };
-})(jQuery, ImagerJs.translations);
+  "Image properties": "Image properties",
+  "Size:": "Size:",
+  "width in px": "width in px",
+  "height in px": "height in px",
+  Left: "Left",
+  Right: "Right",
+  Center: "Center",
+  Inline: "Inline",
+  Floating: "Floating",
+  "Transparent background": "Transparent background",
+  Apply: "Apply",
+  Reject: "Reject",
+  "Delete image": "Delete image",
+  "Move image": "Move image",
+  "Are you sure want to delete this image?":
+    "Are you sure want to delete this image?",
+  "Or drop files here": "Or drop files here",
+  "No file selected.": "No file selected.",
+  "Please wait...": "Please wait...",
+  Save: "Save",
+  Undo: "Undo",
+  "Rotate manually": "Rotate manually",
+  "Rotate 90 left": "Rotate 90° left",
+  "Rotate 90 right": "Rotate 90° left",
+
+  "Image is too big and could cause very poor performance.":
+    "Image is too big and could cause very poor performance.",
+};
+
+export function translate(textString) {
+  if (translations[textString]) {
+    return translations[textString];
+  } else {
+    console.warn("String not found in texts:" + textString);
+    return textString;
+  }
+}

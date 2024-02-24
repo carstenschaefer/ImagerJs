@@ -1,125 +1,132 @@
-(function ($, pluginsCatalog, util) {
-  var MOUSE_DOWN = util.mouseDown('imagerjsResize');
-  var MOUSE_UP = util.mouseUp('imagerjsResize');
-  var MOUSE_MOVE = util.mouseMove('imagerjsResize');
+import {
+  getEventPosition,
+  mouseDown,
+  mouseMove,
+  mouseUp,
+} from "../../util/Util";
+import "./Resize.css";
+import { translate } from "../../Translations";
 
-  /**
-   * Resize plugin. Provides a control which allows to to resize an image.
-   *
-   * @param imagerInstance
-   *
-   * @param options {Object} Resize square control options.
-   * @param options.controlsCss {Object} Css properties that will be applied to
-   * resizing controls.
-   *
-   * @param options.controlsTouchCss {Object} Css properties that will
-   * be applied to resizing controls when on touch device.
-   *
-   * @param options.doubleDiff {Boolean} Doubles mouse pointer distance.
-   * This is needed when image is centered while resizing to make
-   * resize corner be always under mouse cursor.
-   *
-   * @constructor
-   * @memberof ImagerJs.plugins
-   */
-  var Resize = function ResizePlugin(imagerInstance, options) {
-    var _this = this;
+const MOUSE_DOWN = mouseDown("imagerjsResize");
+const MOUSE_UP = mouseUp("imagerjsResize");
+const MOUSE_MOVE = mouseMove("imagerjsResize");
 
-    _this.imager = imagerInstance;
+/**
+ * Resize plugin. Provides a control which allows to to resize an image.
+ *
+ * @param imagerInstance
+ *
+ * @param options {Object} Resize square control options.
+ * @param options.controlsCss {Object} Css properties that will be applied to
+ * resizing controls.
+ *
+ * @param options.controlsTouchCss {Object} Css properties that will
+ * be applied to resizing controls when on touch device.
+ *
+ * @param options.doubleDiff {Boolean} Doubles mouse pointer distance.
+ * This is needed when image is centered while resizing to make
+ * resize corner be always under mouse cursor.
+ *
+ * @constructor
+ * @memberof ImagerJs.plugins
+ */
+export default class ResizePlugin {
+  constructor(imagerInstance, options) {
+    this.imager = imagerInstance;
 
-    _this.defaultOptions = {
+    this.defaultOptions = {
       minWidth: 50,
       minHeight: 50,
       controlsCss: {},
       controlsTouchCss: {},
-      doubleDiff: false
+      doubleDiff: false,
     };
 
     options = options ? options : {};
-    _this.options = $.extend(true, _this.defaultOptions, options);
+    this.options = $.extend(true, this.defaultOptions, options);
 
-    _this.weight = 99999;
-  };
+    this.weight = 99999;
+  }
 
-  Resize.prototype.onToolSelected = function () {
+  onToolSelected() {
     if (this.$resizeSquare) {
-      this.$resizeSquare.addClass('hidden');
+      this.$resizeSquare.addClass("hidden");
     }
-  };
+  }
 
-  Resize.prototype.onToolApply = function () {
+  onToolApply() {
     if (this.$resizeSquare) {
-      this.$resizeSquare.removeClass('hidden');
+      this.$resizeSquare.removeClass("hidden");
     }
-  };
+  }
 
-  Resize.prototype.onToolReject = function () {
+  onToolReject() {
     if (this.$resizeSquare) {
-      this.$resizeSquare.removeClass('hidden');
+      this.$resizeSquare.removeClass("hidden");
     }
-  };
+  }
 
-  Resize.prototype.onEditStart = function () {
-    var _this = this;
-
+  onEditStart() {
     var $resizeSquare = $('<div class="resize-square"></div>');
 
-    if(_this.imager.touchDevice){
-      $resizeSquare.css(_this.options.controlsTouchCss);
+    if (this.imager.touchDevice) {
+      $resizeSquare.css(this.options.controlsTouchCss);
     } else {
-      $resizeSquare.css(_this.options.controlsCss);
+      $resizeSquare.css(this.options.controlsCss);
     }
 
-    _this.imager.$editContainer.append($resizeSquare);
+    this.imager.$editContainer.append($resizeSquare);
 
-    var $body = $('body');
+    var $body = $("body");
 
-    $resizeSquare.on(MOUSE_DOWN, function (downEvent) {
-      var startPos = util.getEventPosition(downEvent);
+    $resizeSquare.on(MOUSE_DOWN, (downEvent) => {
+      var startPos = getEventPosition(downEvent);
 
-      var startDimensions = _this.imager.getPreviewSize();
+      var startDimensions = this.imager.getPreviewSize();
 
-      var ratioWidth = startDimensions.height / startDimensions.width;
-      var ratioHeight = startDimensions.width / startDimensions.height;
+      const ratioWidth = startDimensions.height / startDimensions.width;
+      const ratioHeight = startDimensions.width / startDimensions.height;
 
-      $body.on(MOUSE_MOVE, function (moveEvent) {
+      $body.on(MOUSE_MOVE, (moveEvent) => {
         var movePos = util.getEventPosition(moveEvent);
 
         var leftDiff = movePos.left - startPos.left;
         var topDiff = movePos.top - startPos.top;
 
-        if(_this.options.doubleDiff){
+        if (this.options.doubleDiff) {
           leftDiff *= 2;
           topDiff *= 2;
         }
 
-
         var newWidth = startDimensions.width + leftDiff;
         var newHeight = startDimensions.height + topDiff;
 
-        var fitSize = _this.calcAspectRatio(
-          startDimensions.width, startDimensions.height, newWidth, newHeight
+        var fitSize = this.calcAspectRatio(
+          startDimensions.width,
+          startDimensions.height,
+          newWidth,
+          newHeight
         );
 
         newWidth = fitSize.width;
         newHeight = fitSize.height;
 
-        if (newWidth < _this.options.minWidth) {
-          newWidth = _this.options.minWidth;
+        if (newWidth < this.options.minWidth) {
+          newWidth = this.options.minWidth;
         }
 
-        if (newHeight < _this.options.minHeight) {
-          newHeight = _this.options.minHeight;
+        if (newHeight < this.options.minHeight) {
+          newHeight = this.options.minHeight;
         }
 
-        _this.imager.setPreviewSize(newWidth, newHeight);
+        this.imager.setPreviewSize(newWidth, newHeight);
 
         moveEvent.stopPropagation();
         moveEvent.preventDefault();
         return false;
       });
 
-      $body.on(MOUSE_UP, function (upEvent) {
+      $body.on(MOUSE_UP, (upEvent) => {
         $body.off(MOUSE_UP);
         $body.off(MOUSE_MOVE);
       });
@@ -130,7 +137,7 @@
     });
 
     this.$resizeSquare = $resizeSquare;
-  };
+  }
 
   /**
    * Conserve aspect ratio of the orignal region.
@@ -143,13 +150,9 @@
    * @param {Number} maxHeight Fittable area maximum available height
    * @return {Object} { width, heigth }
    */
-  Resize.prototype.calcAspectRatio = function calculateAspectRatioFit(
-    srcWidth, srcHeight, maxWidth, maxHeight) {
-
+  calcAspectRatio(srcWidth, srcHeight, maxWidth, maxHeight) {
     var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
 
-    return { width: srcWidth*ratio, height: srcHeight*ratio };
-  };
-
-  pluginsCatalog.Resize = Resize;
-})(jQuery, ImagerJs.plugins, ImagerJs.util);
+    return { width: srcWidth * ratio, height: srcHeight * ratio };
+  }
+}

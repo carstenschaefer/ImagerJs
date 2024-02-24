@@ -1,3 +1,5 @@
+import FileSelector from "./util/FileSelector";
+
 /**
  * Redactor plugins global namespace
  *
@@ -197,7 +199,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
         }
 
         var button = this.button.addAfter('image', 'image-manager-pro',
-          translations.t('Add image'));
+          translate('Add image'));
 
         this.button.setAwesome('image-manager-pro', 'fa-picture-o');
         this.button.addCallback(button, this.ImagerJs.show);
@@ -380,7 +382,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 
           $preview.find('.imager-preview-image').on('load.Imager', handleImageLoaded);
 
-          util.setWaiting($preview, translations.t('Please wait...'),
+          util.setWaiting($preview, translate('Please wait...'),
             _this.opts.ImagerJs.preview.waitingCursor);
 
           setTimeout(function () {
@@ -401,7 +403,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 
         // ---- File selector ----
 
-        var fileSelector = new ImagerJs.util.FileSelector('image/*');
+        var fileSelector = new FileSelector('image/*');
         $modalView.append(fileSelector.getElement());
         fileSelector.onFileSelected(fileSelectedHandler);
         // ---- /File selector ----
@@ -419,21 +421,21 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 
         modal.addClass('under-edit-box');
         modal.setTemplate($modalView);
-        modal.setTitle(translations.t('Add image'));
+        modal.setTitle(translate('Add image'));
 
-        modal.addCancelButton(translations.t('Cancel'), function () {
+        modal.addCancelButton(translate('Cancel'), function () {
           if (imagerInstance) {
             imagerInstance.remove();
             imagerInstance = undefined;
           }
         });
 
-        modal.addActionButton(translations.t('Insert'), function () {
+        modal.addActionButton(translate('Insert'), function () {
           if (!imagerInstance) {
             return false;
           }
 
-          util.setWaiting(modal.$modal, translations.t('Please wait...'),
+          util.setWaiting(modal.$modal, translate('Please wait...'),
             _this.opts.ImagerJs.preview.waitingCursor);
 
           imagerInstance.setWaiting(true);
