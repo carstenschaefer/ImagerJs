@@ -8,8 +8,7 @@
     ".": "./src/ImagerJs.js"
   },
   "scripts": {
-    "start": "node build.js --serve --dev",
-    "build": "node build.js"
+    "start": "node build.js --serve --dev"
   },
   "devDependencies": {
     "esbuild": "^0.20.1"

@@ -1,8 +1,5 @@
 const esbuild = require("esbuild");
-const {
-  existsSync,
-  readdirSync,
-} = require("fs");
+const { existsSync, readdirSync } = require("fs");
 
 const dev = process.argv.includes("--dev");
 const analyze = process.argv.includes("--analyze");
@@ -33,8 +30,8 @@ const config = {
 
     console.log("serving: ");
     console.log(`  http://localhost:${port}`);
-    readdirSync("./public").forEach((s) =>
-      console.log(`  http://localhost:${port}/${s}`)
+    readdirSync("./public").forEach(
+      (s) => s == "index.html" || console.log(`  http://localhost:${port}/${s}`)
     );
   } else {
     let out = process.argv[2]?.trim();
