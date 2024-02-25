@@ -116,7 +116,7 @@ export default class ToolbarPlugin {
 
     this.operationToolbar.addButton(
       "btn-accept",
-      "fa-check",
+      "icon-ok",
       translate("Apply"),
       () => {
         btn.applyHandler();
@@ -128,7 +128,7 @@ export default class ToolbarPlugin {
 
     this.operationToolbar.addButton(
       "btn-reject",
-      "fa-times",
+      "icon-cancel",
       translate("Reject"),
       () => {
         btn.rejectHandler();

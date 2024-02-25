@@ -21,7 +21,7 @@ export class UndoPlugin {
     return [
       {
         classes: "btn-undo",
-        iconClasses: "fa-undo",
+        iconClasses: "icon-ccw",
         tooltip: translate("Undo"),
         buttonCreatedHandler: ($btn) => {
           this.$toolbarButton = $btn;

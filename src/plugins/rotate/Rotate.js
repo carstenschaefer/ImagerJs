@@ -60,7 +60,7 @@ export default class RotatePlugin {
     return [
       {
         classes: "btn-rotate",
-        iconClasses: "fa-repeat",
+        iconClasses: "icon-cw",
         tooltip: translate("Rotate manually"),
         group: group,
         enabledHandler: (toolbar) => {
@@ -86,7 +86,7 @@ export default class RotatePlugin {
       {
         group: group,
         classes: "btn-rotate btn-rotate-90",
-        iconClasses: "fa-undo",
+        iconClasses: "icon-ccw",
         tooltip: translate("Rotate 90 left"),
         enabledHandler: (toolbar) => {
           this.imager.setWaiting(true);
@@ -100,7 +100,7 @@ export default class RotatePlugin {
       {
         group: group,
         classes: "btn-rotate",
-        iconClasses: "fa-repeat",
+        iconClasses: "icon-cw",
         tooltip: translate("Rotate 90 right"),
         enabledHandler: (toolbar) => {
           this.imager.setWaiting(true);
@@ -259,7 +259,7 @@ export default class RotatePlugin {
 
   render(ctx) {
     // create temp canvas
-    var tempCtx = this.imager.tempCanvas.getContext("2d");
+    const tempCtx = this.imager.tempCanvas.getContext("2d");
     tempCtx.clearRect(0, 0, tempCtx.canvas.width, tempCtx.canvas.height);
 
     // convert local coordinates from preview to

@@ -4,12 +4,11 @@
 <head lang="en">
   <meta charset="UTF-8">
   <title>ImagerJs - Standalone</title>
-  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-  <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <script src="/build/main.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+
+  <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+  <script defer src="/build/main.js"></script>
   <link href="/build/main.css" rel="stylesheet">
 
   <style>
@@ -146,32 +145,9 @@
         '<div class="imager-selector-container" tabindex="1"></div>'
       );
 
-      function onImagerReady() {
-        imager.off('ready', onImagerReady);
-
-        imager.startEditing();
-        $selectorContainer.remove();
-      };
-
-      function onImageLoad() {
-        imager.$imageElement.off('load', onImageLoad);
-
-        imager.handleImageElementSrcChanged();
-        imager.on('ready', onImagerReady);
-      };
-
       fileSelector.onFileSelected(function (file) {
         // util.setWaiting(imager.$selectorContainer, translations.t('Please wait...'));
-        imager.init(file);
-
-        setTimeout(function () {
-          imager.$imageElement.attr('src', file.data);
-          imager.$imageElement.css('height', 'auto');
-          imager.$imageElement.css('min-height', 'inherit');
-          imager.$imageElement.css('min-width', 'inherit');
-
-          imager.$imageElement.on('load', onImageLoad);
-        }, 200);
+        imager.load(file.data);
       });
 
       $selectorContainer.append(fileSelector.getElement());

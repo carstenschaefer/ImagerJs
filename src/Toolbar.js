@@ -43,7 +43,7 @@ export class Toolbar {
         '<a href="#" ' +
         'data-sizeable="toolbar-button" ' +
         'data-cssrules="line-height,font-size:($v / 2.5)" tabindex="-1">' +
-        '<i class="fa ' +
+        '<i class="' +
         iconClass +
         '"></i>' +
         "</a>" +
@@ -79,7 +79,7 @@ export class Toolbar {
           'data-editable-canvas-sizeable="toolbar-button" ' +
           'data-editable-canvas-cssrules="line-height,font-size:($v / 2.5)" ' +
           'tabindex="-1">' +
-          '<i class="fa ' +
+          '<i class="' +
           iconClass +
           '"></i>' +
           "</a>" +

@@ -169,3 +169,7 @@
   .affix {
     position: fixed;
   }
+
+  a.toolbar-button {
+    text-decoration: none !important;
+  }

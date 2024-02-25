@@ -50,7 +50,7 @@ export default class CropPlugin {
     return [
       {
         classes: "btn-crop",
-        iconClasses: "fa-scissors",
+        iconClasses: "icon-scissors",
         tooltip: translate("Crop"),
         enabledHandler: () =>  {
           if (this.sizeBeforeCrop) {

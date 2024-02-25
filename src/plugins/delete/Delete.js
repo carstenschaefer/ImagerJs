@@ -37,7 +37,7 @@ export default class DeletePlugin {
     return [
       {
         classes: "btn-delete",
-        iconClasses: "fa-times",
+        iconClasses: "icon-cancel",
         tooltip: translate("Delete image"),
         enabledHandler: (toolbar) => {
           var question = translate("Are you sure want to delete this image?");

@@ -26,7 +26,7 @@ export default class SavePlugin {
     return [
       {
         classes: "btn-save",
-        iconClasses: "fa-save",
+        iconClasses: "icon-floppy",
         tooltip: translate("Save"),
         enabledHandler: (toolbar) => {
           var contentConfig = this.imager.options.contentConfig;

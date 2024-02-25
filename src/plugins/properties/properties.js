@@ -36,7 +36,7 @@ export default class PropertiesPlugin {
     return [
       {
         classes: "btn-properties",
-        iconClasses: "fa-cog",
+        iconClasses: "icon-cog",
         tooltip: translate("Image properties"),
         enabledHandler: () => this.showPropertiesModal(),
       },
@@ -263,7 +263,7 @@ export default class PropertiesPlugin {
 
     this.$moveButton = toolbar.addButton(
       "btn-move",
-      "fa-arrows",
+      "icon-arrows-cw",
       translate("Move image"),
       () =>  {}
     );

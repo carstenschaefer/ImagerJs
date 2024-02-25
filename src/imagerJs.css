@@ -1,143 +1,147 @@
 .imager-preview {
-    margin-top: 10px;
+  margin-top: 10px;
 
-    min-width: 300px;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: center;
+  min-width: 300px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .imager-preview-image {
-    margin-top: 40px;
-    margin-bottom: 15px;
-    width: 100%;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  width: 100%;
 }
 
 .redactor-editor .imager-preview-image {
-    margin-left: 15px;
-    margin-right: 15px;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 .imager-edit-outer-container {
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .imager-edit-container {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: flex-start;
-    outline: none;
-    position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  outline: none;
+  position: relative;
 }
 
 .imager-edit-canvas {
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1100;
-
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1100;
 }
 
 .file-selector {
-    padding-top: 20px;
-    padding-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .modaljs-overlay.under-edit-box {
-    z-index: 2000;
+  z-index: 2000;
 }
 
 .modaljs.under-edit-box {
-    z-index: 2001;
+  z-index: 2001;
 }
 
 .overlay-message-wrapper {
-    cursor: wait;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    z-index: 3000;
-    background: rgba(255, 255, 255, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+  cursor: wait;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  z-index: 3000;
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .overlay-message {
-    text-align: center;
-    background: white;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .overlay-message .action-button {
-    width: auto;
-    background: whitesmoke;
-    border: 1px solid #CCCBCB;
-    padding: 5px 10px;
-    display: block;
-    margin-top: 15px;
-    border-radius: 5px;
-    cursor: pointer;
+  width: auto;
+  background: whitesmoke;
+  border: 1px solid #cccbcb;
+  padding: 5px 10px;
+  display: block;
+  margin-top: 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 form.custom-quality {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 form.custom-quality .size-in-kb {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 form.custom-quality .input-group-addon {
-    width: 1px;
+  width: 1px;
 }
 
 input#imager-quality-custom {
-    width: 100px;
+  width: 100px;
 }
 
 .imager-selector-container {
-    padding: 10px;
-    position: absolute;
-    background: rgb(250, 250, 250);
-    border: 1px solid rgb(223, 223, 223);
+  padding: 10px;
+  position: absolute;
+  background: rgb(250, 250, 250);
+  border: 1px solid rgb(223, 223, 223);
 }
 
 .imager-quality-standalone .imager-quality-wrapper {
-    position: absolute;
-    height: 120px;
-    bottom: -120px;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    background: white;
-    box-shadow: 0px -10px 40px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgb(240, 240, 240);
-    min-width: 300px;
+  position: absolute;
+  height: 120px;
+  bottom: -120px;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: white;
+  box-shadow: 0px -10px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgb(240, 240, 240);
+  min-width: 300px;
 }
 
 .imager-quality-standalone .imager-quality-wrapper.custom-quality-visible {
-    height: 200px;
-    bottom: -200px;
+  height: 200px;
+  bottom: -200px;
+}
+
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
 }

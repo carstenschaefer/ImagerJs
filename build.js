@@ -1,5 +1,6 @@
 const esbuild = require("esbuild");
 const { existsSync, readdirSync } = require("fs");
+const loaders = require("./loaders");
 
 const dev = process.argv.includes("--dev");
 const analyze = process.argv.includes("--analyze");
@@ -16,7 +17,7 @@ const config = {
   metafile: analyze,
   plugins: [],
   sourcemap: "external",
-  loader: { ".gif": "file", ".cur": "file" },
+  loader: loaders,
   define: { server_port: String(port) },
   inject: [dev && "live-reload.js"].filter(Boolean),
 };

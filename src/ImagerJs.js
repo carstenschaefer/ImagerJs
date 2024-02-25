@@ -9,6 +9,8 @@ import SavePlugin from "./plugins/save/Save";
 import ToolbarPlugin from "./plugins/toolbar/Toolbar";
 import { UndoPlugin } from "./plugins/undo/Undo";
 import * as util from "./util/Util";
+import "./imagerJs.css";
+import './assets/fontello/css/fontello.css';
 
 const imagerInstances = [];
 const pluginsCatalog = {
@@ -486,15 +488,35 @@ export default class Imager {
     return deferred.promise();
   }
 
-  init(file) {
+  async load(file) {
+    if (!file) throw new Error("file is required");
+
+    if (file instanceof File) {
+      const orig = file;
+      file = await new Promise((res, rej) => {
+        const reader = new FileReader();
+
+        reader.onerror = rej;
+        reader.onload = () => res(reader.result);
+        reader.readAsDataURL(orig);
+      });
+    }
+
+    const onImagerReady = () => {
+      this.off("ready", onImagerReady);
+
+      this.startEditing();
+    };
+
     var onImageLoad = () => {
       this.$imageElement.off("load", onImageLoad);
 
       this.handleImageElementSrcChanged();
+      this.on("ready", onImagerReady);
     };
 
     setTimeout(() => {
-      this.$imageElement.attr("src", file.data);
+      this.$imageElement.attr("src", file);
       this.$imageElement.css("height", "auto");
       this.$imageElement.css("min-height", "inherit");
       this.$imageElement.css("min-width", "inherit");
@@ -727,6 +749,7 @@ export default class Imager {
     this.$editContainer.append($canvas);
 
     this.tempCanvas = document.createElement("canvas");
+    this.tempCanvas.classList.add("imager-temp-canvas");
     this.tempCanvas.width = imageNaturalWidth;
     this.tempCanvas.height = imageNaturalHeight;
 
