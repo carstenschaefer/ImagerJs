@@ -37,7 +37,11 @@ export default class ResizePlugin {
     this.defaultOptions = {
       minWidth: 50,
       minHeight: 50,
-      controlsCss: {},
+      aspectRatio: null,
+      controlsCss: {
+        width: "-20px",
+        height: "-20px",
+      },
       controlsTouchCss: {},
       doubleDiff: false,
     };
@@ -72,7 +76,12 @@ export default class ResizePlugin {
     if (this.imager.touchDevice) {
       $resizeSquare.css(this.options.controlsTouchCss);
     } else {
-      $resizeSquare.css(this.options.controlsCss);
+      const { height, width } = this.options.controlsCss;
+      $resizeSquare.css({
+        ...this.options.controlsCss,
+        right: "-" + width,
+        bottom: "-" + height,
+      });
     }
 
     this.imager.$editContainer.append($resizeSquare);
@@ -88,6 +97,7 @@ export default class ResizePlugin {
       const ratioHeight = startDimensions.width / startDimensions.height;
 
       $body.on(MOUSE_MOVE, (moveEvent) => {
+        console.log(moveEvent);
         var movePos = getEventPosition(moveEvent);
 
         var leftDiff = movePos.left - startPos.left;
@@ -120,6 +130,12 @@ export default class ResizePlugin {
         }
 
         this.imager.setPreviewSize(newWidth, newHeight);
+        $resizeSquare.css({
+          right: null,
+          bottom: null,
+          left: newWidth,
+          top: newHeight,
+        });
 
         moveEvent.stopPropagation();
         moveEvent.preventDefault();
@@ -151,7 +167,9 @@ export default class ResizePlugin {
    * @return {Object} { width, heigth }
    */
   calcAspectRatio(srcWidth, srcHeight, maxWidth, maxHeight) {
-    var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+    var ratio =
+      this.options.aspectRatio ||
+      Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
 
     return { width: srcWidth * ratio, height: srcHeight * ratio };
   }

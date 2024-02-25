@@ -1,22 +1,18 @@
 import { nanoid } from "nanoid";
 import piexif from "piexifjs";
-import { Modal } from "./Modal";
-import { Toolbar } from "./Toolbar";
 import { translate } from "./Translations";
 import CropPlugin from "./plugins/crop/Crop";
 import DeletePlugin from "./plugins/delete/Delete";
-import PropertiesPlugin from "./plugins/properties/properties";
 import ResizePlugin from "./plugins/resize/Resize";
 import RotatePlugin from "./plugins/rotate/Rotate";
 import SavePlugin from "./plugins/save/Save";
 import ToolbarPlugin from "./plugins/toolbar/Toolbar";
 import { UndoPlugin } from "./plugins/undo/Undo";
-import FileSelector from "./util/FileSelector";
 import * as util from "./util/Util";
 
 const imagerInstances = [];
 const pluginsCatalog = {
-  Modal,
+  // Modal,
   Crop: CropPlugin,
   Delete: DeletePlugin,
   // Properties: PropertiesPlugin,
@@ -27,16 +23,9 @@ const pluginsCatalog = {
   Undo: UndoPlugin,
 };
 
-const PLATFORM = {
-  ios: "ios",
-  android: "android",
-  windowsMobile: "windowsMobile",
-  genericMobile: "genericMobile",
-};
-
 /**
  *
- * @param $imageElement <img> Element to attach to
+ * @param $rootElement view to render editor inside
  *
  * @param options {Object} Options
  * @param options.editModeCss {Object} Css object for image edit box.
@@ -119,8 +108,13 @@ const PLATFORM = {
  * @memberof ImagerJs
  */
 export default class Imager {
-  constructor($imageElement, options) {
-    this.$imageElement = $($imageElement);
+  constructor($rootElement, options) {
+    this.$rootElement = $($rootElement);
+    this.$imageElement = $(
+      `<img id="${nanoid()}" src="" style="min-width: 300px; min-height: 200px; width: 300px; position: absolute">`
+    );
+
+    this.$imageElement.appendTo(this.$rootElement);
 
     this.defaultOptions = {
       saveData: undefined,
@@ -177,23 +171,11 @@ export default class Imager {
      */
     this.originalExif = null;
 
+    // 32 MP on desktop
+    this.canvasSizeLimit = this.options.canvasSizeLimit || 32 * 1024 * 1024;
+
     // detect Platform
     this.detectPlatform();
-
-    // if no canvasSizeLimit set in options, set it
-    if (!this.options.canvasSizeLimit) {
-      if (
-        [PLATFORM.ios, PLATFORM.android, PLATFORM.windowsMobile].indexOf(
-          this.platform
-        ) !== -1
-      ) {
-        // 5 MP on devices
-        this.canvasSizeLimit = 5 * 1024 * 1024;
-      } else {
-        // 32 MP on desktop
-        this.canvasSizeLimit = 32 * 1024 * 1024;
-      }
-    }
 
     this.$originalImage = this.$imageElement.clone();
 
@@ -205,14 +187,6 @@ export default class Imager {
      */
     this.pluginsInstances = null;
     this.instantiatePlugins(pluginsCatalog);
-
-    $("body").on("imagerResize", () => {
-      this.adjustEditContainer();
-    });
-
-    $(window).on("resize", () => {
-      this.adjustEditContainer();
-    });
   }
 
   destroy() {
@@ -544,15 +518,21 @@ export default class Imager {
     this.originalPreviewWidth = this.$imageElement.width();
     this.originalPreviewHeight = this.$imageElement.height();
 
-    this.$editContainer = $(
-      '<div class="imager-edit-container" tabindex="1"></div>'
-    );
+    const outerId = nanoid();
+    const innerId = nanoid();
+
+    this.$rootElement.append(`
+    <div id="${outerId}" class="imager-edit-outer-container">
+    <div id="${innerId}" class="imager-edit-container" tabindex="1"></div>
+    </div>
+    `);
+
+    this.$editOuterContainer = $(`#${outerId}`);
+    this.$editContainer = $(`#${innerId}`);
 
     if (this.options.editModeCss) {
       this.$editContainer.css(this.options.editModeCss);
     }
-
-    $("body").append(this.$editContainer);
 
     this._createEditCanvas();
 
@@ -634,6 +614,9 @@ export default class Imager {
     this.$imageElement.attr("src", imageData);
 
     this.$editContainer.remove();
+    this.$editOuterContainer.remove();
+
+    this.$editOuterContainer = null;
     this.$editContainer = null;
 
     this.canvas = null;
@@ -748,7 +731,7 @@ export default class Imager {
     this.tempCanvas.height = imageNaturalHeight;
 
     if (this.showTemporaryCanvas) {
-      $("body").append(this.tempCanvas);
+      this.$rootElement.append(this.tempCanvas);
       $(this.tempCanvas).css({
         position: "absolute",
         left: "50px",
@@ -990,6 +973,11 @@ export default class Imager {
    * @param {number} height
    */
   setPreviewSize(width, height) {
+    this.$editContainer.css({
+      width: width,
+      height: height,
+    });
+
     this.$imageElement.css({
       width: width,
       height: height,
@@ -1104,8 +1092,8 @@ export default class Imager {
 
     if (this.$editContainer) {
       this.$editContainer.css({
-        left: imageOffset.left,
-        top: imageOffset.top,
+        // left: imageOffset.left,
+        // top: imageOffset.top,
         width: this.$imageElement.width(),
         height: this.$imageElement.height(),
       });
@@ -1270,7 +1258,8 @@ export default class Imager {
 
     for (var i = 0; i < elementsToResize.length; i++) {
       var elem = elementsToResize[i];
-      var attributesToChange = $(elem).attr("data-cssrules").split(",");
+      var attributesToChange = $(elem).attr("data-cssrules")?.split(",");
+      if (!attributesToChange) return;
 
       for (var a = 0; a < attributesToChange.length; a++) {
         var attrName = attributesToChange[a];

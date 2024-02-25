@@ -161,7 +161,7 @@ export default class RotatePlugin {
     });
 
     this.$rotateControls = $rotateControls;
-    this.imager.$editContainer.append($rotateControls);
+    this.imager.$editOuterContainer.append($rotateControls);
 
     var $corners = $rotateControls.find(".rotate-corner");
 

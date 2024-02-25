@@ -31,8 +31,7 @@ export default class ToolbarPlugin {
     this.toolbar = new Toolbar(this.options);
     this.toolbar
       .getElement()
-      .attr("data-sizeable", "toolbar-button")
-      .attr("data-cssrules", "top:($v * -1)");
+      .attr("data-sizeable", "toolbar-button");
 
     var getButtonsResults = this.imager.invokePluginsMethod("getButtons");
 
@@ -69,7 +68,7 @@ export default class ToolbarPlugin {
       }
     }
 
-    this.imager.$editContainer.append(this.toolbar.getElement());
+    this.imager.$editOuterContainer.prepend(this.toolbar.getElement());
   }
 
   onRemove() {
@@ -139,7 +138,7 @@ export default class ToolbarPlugin {
       }
     );
 
-    this.imager.$editContainer.append(this.operationToolbar.getElement());
+    this.imager.$editOuterContainer.prepend(this.operationToolbar.getElement());
   }
 
   operationButtonHandler() {

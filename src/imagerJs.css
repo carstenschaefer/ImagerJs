@@ -19,18 +19,23 @@
     margin-right: 15px;
 }
 
+.imager-edit-outer-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
 .imager-edit-container {
-    position: absolute;
     z-index: 2004;
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: flex-start;
     outline: none;
+    position: relative;
 }
 
 .imager-edit-canvas {
-    position: absolute;
     left: 0;
     top: 0;
     right: 0;

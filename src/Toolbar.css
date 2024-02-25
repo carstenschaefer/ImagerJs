@@ -68,14 +68,6 @@ ul.toolbar.toolbar-rightTop {
     left: auto;
 }
 
-ul.toolbar.toolbar-topLeft {
-    height: auto;
-    left: 0;
-    right: auto;
-    top: -32px;
-    bottom: auto;
-}
-
 ul.toolbar.toolbar-topRight {
     width: auto;
     height: auto;

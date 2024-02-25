@@ -1,6 +1,7 @@
 import { mouseDown, mouseMove, mouseUp } from "../../util/Util";
 import "./Properties.css";
 import { translate } from "../../Translations";
+import { Modal } from "../../Modal";
 
 const MOUSE_DOWN = mouseDown("MovableFloatingMode");
 const MOUSE_MOVE = mouseMove("MovableFloatingMode");
