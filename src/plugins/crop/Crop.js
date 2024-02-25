@@ -29,6 +29,7 @@ export default class CropPlugin {
     this.imager = imagerInstance;
 
     this.defaultOptions = {
+      aspectRatio: null,
       controlsCss: {},
       controlsTouchCss: {},
     };
